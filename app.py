@@ -48,7 +48,6 @@ def get_app_info():
     Returns:
     - info (str): A formatted string containing details about the application.
     """
-    st.write(lang)
     created_by = lang["created-by"]
     powered_by = lang["powered-by"]
     version = lang["version"]
