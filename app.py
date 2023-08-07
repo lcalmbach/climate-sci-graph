@@ -48,15 +48,18 @@ def get_app_info():
     Returns:
     - info (str): A formatted string containing details about the application.
     """
+    st.write(lang)
     created_by = lang["created-by"]
     powered_by = lang["powered-by"]
     version = lang["version"]
     translation = lang["translation"]
-
+    data_source = lang["data-source"]
+    
     info = f"""<div style="background-color:powderblue; padding: 10px;border-radius: 15px;">
     <small>{created_by} <a href="mailto:{__author_email__}">{__author__}</a><br>
     {version}: {__version__} ({VERSION_DATE})<br>
-    {powered_by} <a href="https://streamlit.io/">Streamlit</a><br>  
+    {data_source}: <a href="https://www.meteoswiss.admin.ch/services-and-publications/applications/ext/climate-tables-homogenized.html">MeteoSwiss</a><br>
+    {powered_by} <a href="https://streamlit.io/">Streamlit</a><br>
     {translation} <a href="https://lcalmbach-gpt-translate-app-i49g8c.streamlit.app/">PolyglotGPT</a><br>
     <a href="{GIT_REPO}">git-repo</a><br>
     """

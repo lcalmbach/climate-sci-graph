@@ -28,8 +28,7 @@
     "text-translation": "Translations by",
     "version": "Version",
     "loading-data": "Loading data...",
-    "translation": "Translation",
-    "data-source": "Data source"
+    "translation": "Translation"
   },
   "de": {
     "language": "Sprache",
@@ -44,8 +43,7 @@
     "text-translation": "\u00dcbersetzungen von",
     "version": "Version",
     "loading-data": "Daten werden geladen...",
-    "translation": "\u00dcbersetzung",
-    "data-source": "Datenquelle"
+    "translation": "\u00dcbersetzung"
   },
   "fr": {
     "language": "Langue",
@@ -60,8 +58,7 @@
     "text-translation": "Traductions par",
     "version": "Version",
     "loading-data": "Chargement des donn\u00e9es...",
-    "translation": "Traduction",
-    "data-source": "Source de donn\u00e9es"
+    "translation": "Traduction"
   },
   "it": {
     "language": "Lingua",
@@ -76,7 +73,6 @@
     "text-translation": "Traduzioni di",
     "version": "Versione",
     "loading-data": "Caricamento dati...",
-    "translation": "Traduzione",
-    "data-source": "Fonte dati"
+    "translation": "Traduzione"
   }
 }
