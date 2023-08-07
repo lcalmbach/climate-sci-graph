@@ -1,0 +1,7 @@
+streamlit
+iso639==0.1.4
+streamlit_lottie==0.0.5
+streamlit_option_menu==0.3.6
+folium==0.14.0
+streamlit_folium==0.13.0
+plotly==5.15.0

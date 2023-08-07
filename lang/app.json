@@ -1,0 +1,77 @@
+{
+  "source": {
+    "language": "Language",
+    "menu-options": [
+      "Home",
+      "Stations overview",
+      "Monthly Stats",
+      "Ressources"
+    ],
+    "created-by": "App created by",
+    "powered-by": "Powered by",
+    "text-translation": "Translations by",
+    "version": "Version",
+    "loading-data": "Loading data...",
+    "translation": "Translation"
+  },
+  "en": {
+    "language": "Language",
+    "menu-options": [
+      "Home",
+      "Stations overview",
+      "Monthly Stats",
+      "Ressources"
+    ],
+    "created-by": "App created by",
+    "powered-by": "Powered by",
+    "text-translation": "Translations by",
+    "version": "Version",
+    "loading-data": "Loading data...",
+    "translation": "Translation"
+  },
+  "de": {
+    "language": "Sprache",
+    "menu-options": [
+      "Startseite",
+      "\u00dcbersicht der Stationen",
+      "Monatliche Statistiken",
+      "Ressourcen"
+    ],
+    "created-by": "App erstellt von",
+    "powered-by": "Powered by",
+    "text-translation": "\u00dcbersetzungen von",
+    "version": "Version",
+    "loading-data": "Daten werden geladen...",
+    "translation": "\u00dcbersetzung"
+  },
+  "fr": {
+    "language": "Langue",
+    "menu-options": [
+      "Accueil",
+      "Aper\u00e7u des stations",
+      "Statistiques mensuelles",
+      "Ressources"
+    ],
+    "created-by": "Application cr\u00e9\u00e9e par",
+    "powered-by": "Propuls\u00e9 par",
+    "text-translation": "Traductions par",
+    "version": "Version",
+    "loading-data": "Chargement des donn\u00e9es...",
+    "translation": "Traduction"
+  },
+  "it": {
+    "language": "Lingua",
+    "menu-options": [
+      "Home",
+      "Panoramica stazioni",
+      "Statistiche mensili",
+      "Risorse"
+    ],
+    "created-by": "App creata da",
+    "powered-by": "Powered by",
+    "text-translation": "Traduzioni di",
+    "version": "Versione",
+    "loading-data": "Caricamento dati...",
+    "translation": "Traduzione"
+  }
+}
