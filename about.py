@@ -15,6 +15,6 @@ class About:
         self.app_name = app_name
 
     def run(self):
-        st.image('saentis_wide.jpg', use_column_width=True)
+        st.image("saentis_wide.jpg", use_column_width=True)
         st.header(self.app_name)
         st.markdown(lang["app-info"])

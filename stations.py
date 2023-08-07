@@ -35,6 +35,7 @@ class Stations:
             "latitude": "Latitude",
             "longitude": "Longitude",
             "width": 800,
+            "height": 400,
             "tooltip": "Station",
             "popup": "Station",
             "zoom_start": 7,

@@ -36,12 +36,7 @@ def get_menu_option():
         return option_menu(
             None,
             menu_options,
-            icons=[
-                "house",
-                "broadcast",
-                "calendar-month",
-                "archive"
-            ],
+            icons=["house", "broadcast", "calendar-month", "archive"],
             menu_icon="cast",
             default_index=0,
         )
@@ -184,9 +179,9 @@ def get_data():
         df[["Year", "Month"]] = df[["Year", "Month"]].astype(int)
         station_data = pd.concat([station_data, df])
 
-    stations = url_df.reset_index()[['Abbreviation', 'Station']]
-    stations.columns = ['Station', 'Stationname']
-    station_data = station_data.merge(stations, on='Station', how='left')
+    stations = url_df.reset_index()[["Abbreviation", "Station"]]
+    stations.columns = ["Station", "Stationname"]
+    station_data = station_data.merge(stations, on="Station", how="left")
     # station_data.drop('Abbreviation', axis=1, inplace=True)
     return station_data, url_df
 

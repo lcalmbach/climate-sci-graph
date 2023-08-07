@@ -150,9 +150,10 @@ def show_filter(settings: dict, lang: dict, options: dict):
                 )
             if "years" in settings:
                 settings["years"] = st.slider(
-                    lang["years"], min_value=options["min_year"],
+                    lang["years"],
+                    min_value=options["min_year"],
                     max_value=options["max_year"],
-                    value=[options["min_year"], options["max_year"]]
+                    value=[options["min_year"], options["max_year"]],
                 )
             if "months" in settings:
                 settings["months"] = st.multiselect(

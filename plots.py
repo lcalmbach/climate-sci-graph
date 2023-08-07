@@ -26,7 +26,7 @@ def map_chart(df, settings):
             popup=row[settings["popup"]],
             tooltip=row[settings["tooltip"]],
         ).add_to(map_object)
-    st_data = st_folium(map_object, width=settings["width"])
+    st_data = st_folium(map_object, width=settings["width"], height=settings["height"])
     return st_data
 
 
@@ -265,7 +265,7 @@ def heatmap(df, settings):
         alt.Chart(df)
         .mark_rect()
         .encode(
-            #x=alt.X(settings["x"], sort=list(cn.MONTHS_REV_DICT.keys())),
+            # x=alt.X(settings["x"], sort=list(cn.MONTHS_REV_DICT.keys())),
             x=alt.X(settings["x"]),
             y=alt.Y(
                 settings["y"],
@@ -291,9 +291,9 @@ def heatmap(df, settings):
 def bar_chart(df: pd.DataFrame, settings: dict):
     if "title" not in settings:
         settings["title"] = ""
-    if 'tooltip' not in settings:
+    if "tooltip" not in settings:
         settings["tooltip"] = [settings["x"], settings["y"]]
-    if 'bar_width' not in settings:
+    if "bar_width" not in settings:
         settings["bar_width"] = 10
     bar_width = settings["bar_width"]
     x_axis = alt.X(f"{settings['x']}:N", title=settings["x_title"])
@@ -301,9 +301,7 @@ def bar_chart(df: pd.DataFrame, settings: dict):
     plot = (
         alt.Chart(df)
         .mark_bar(size=bar_width)
-        .encode(x=x_axis,
-                y=y_axis,
-                tooltip=settings["tooltip"])
+        .encode(x=x_axis, y=y_axis, tooltip=settings["tooltip"])
     )
     if "h_line" in settings:
         plot += (
@@ -321,10 +319,11 @@ def bar_chart(df: pd.DataFrame, settings: dict):
 
     return st.altair_chart(plot)
 
+
 def box_plot(df: pd.DataFrame, settings: dict):
     if "title" not in settings:
         settings["title"] = ""
-    if 'tooltip' not in settings:
+    if "tooltip" not in settings:
         settings["tooltip"] = [settings["x"], settings["y"]]
 
     x_axis = alt.X(f"{settings['x']}:N", title=settings["x_title"])
@@ -332,9 +331,7 @@ def box_plot(df: pd.DataFrame, settings: dict):
     plot = (
         alt.Chart(df)
         .mark_boxplot()
-        .encode(x=x_axis,
-                y=y_axis,
-                tooltip=settings["tooltip"])
+        .encode(x=x_axis, y=y_axis, tooltip=settings["tooltip"])
     )
     if "h_line" in settings:
         plot += (
@@ -441,7 +438,7 @@ def line_chart_3d(df, settings):
         x="x",
         y="y",
         z="z",
-        title=settings['title'],
+        title=settings["title"],
         color=settings["value"],
         color_continuous_scale="edge",  # px.colors.sequential.ed
         # this does not work
@@ -462,7 +459,7 @@ def line_chart_3d(df, settings):
         width=800,
         height=700,
         autosize=False,
-        #title="test",
+        # title="test",
         scene=dict(
             camera=dict(
                 up=dict(x=0, y=0, z=1),

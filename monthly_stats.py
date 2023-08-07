@@ -3,7 +3,14 @@ import os
 import math
 
 from helper import init_lang_dict_complete, get_lang, show_filter, show_download_button
-from plots import bar_chart, box_plot, line_chart, heatmap, time_series_line, line_chart_3d
+from plots import (
+    bar_chart,
+    box_plot,
+    line_chart,
+    heatmap,
+    time_series_line,
+    line_chart_3d,
+)
 
 PAGE = __name__
 lang = {}
@@ -80,18 +87,15 @@ class MonthlyStats:
             .reset_index()
         )
         col_config = {
-            "Station Name": st.column_config.Column(lang['station_name']),
-            "Station": st.column_config.Column(lang['station']),
-            "Month": st.column_config.Column(lang['month']),
-            "min": st.column_config.Column(lang['min'] + f" {self.parameter_label}"),
-            "max": st.column_config.Column(lang['max'] + f" {self.parameter_label}"),
-            "mean": st.column_config.Column(lang['mean'] + f" {self.parameter_label}"),
+            "Station Name": st.column_config.Column(lang["station_name"]),
+            "Station": st.column_config.Column(lang["station"]),
+            "Month": st.column_config.Column(lang["month"]),
+            "min": st.column_config.Column(lang["min"] + f" {self.parameter_label}"),
+            "max": st.column_config.Column(lang["max"] + f" {self.parameter_label}"),
+            "mean": st.column_config.Column(lang["mean"] + f" {self.parameter_label}"),
         }
         st.dataframe(
-            df,
-            use_container_width=True,
-            hide_index=True,
-            column_config=col_config
+            df, use_container_width=True, hide_index=True, column_config=col_config
         )
         show_download_button(df)
 
@@ -105,13 +109,13 @@ class MonthlyStats:
             }
             filter = show_filter(settings, lang, options)
             return filter
-        
+
         st.header(lang["barcharts"])
         st.markdown(f"**{self.parameter_label}**")
         st.markdown(lang["bar_chart_intro"])
         show_average = st.sidebar.checkbox("Show average line")
         df = self.filter_data(get_filter())
-        
+
         df = (
             df.groupby(["Stationname", "Station", "Month"])[self.parameter]
             .agg(["min", "max", "mean"])
@@ -124,17 +128,17 @@ class MonthlyStats:
             "height": 400,
             "y_title": self.parameter_label,
             "x_title": lang["month"],
-            "bar_width": 20
+            "bar_width": 20,
         }
-        stations = df['Station'].unique()
+        stations = df["Station"].unique()
         st.write(self.parameter)
         for station in stations:
-            df_filtered = df[df['Station'] == station]
+            df_filtered = df[df["Station"] == station]
             settings["title"] = f"{df_filtered.iloc[0]['Stationname']} ({station})"
             if show_average:
                 mean = df["mean"].mean()
                 df_filtered["mean_all"] = mean
-                settings["h_line"] = 'mean_all'
+                settings["h_line"] = "mean_all"
             bar_chart(df_filtered, settings)
             show_download_button(df_filtered)
 
@@ -148,11 +152,10 @@ class MonthlyStats:
             }
             filter = show_filter(settings, lang, options)
             return filter
-        
+
         st.header(lang["boxplot"])
         st.markdown(f"**{self.parameter_label}**")
         st.markdown(lang["boxplot_intro"])
-        show_average = st.sidebar.checkbox("Show average line")
         df = self.filter_data(get_filter())
         settings = {
             "x": "Month",
@@ -162,14 +165,10 @@ class MonthlyStats:
             "y_title": self.parameter_label,
             "x_title": lang["month"],
         }
-        stations = df['Station'].unique()
+        stations = df["Station"].unique()
         for station in stations:
-            df_filtered = df[df['Station'] == station]
+            df_filtered = df[df["Station"] == station]
             settings["title"] = f"{df_filtered.iloc[0]['Stationname']} ({station})"
-            if show_average:
-                mean = df["mean"].mean()
-                df_filtered["mean_all"] = mean
-                settings["h_line"] = 'mean_all'
             box_plot(df_filtered, settings)
             show_download_button(df_filtered)
 
@@ -183,13 +182,12 @@ class MonthlyStats:
             }
             filter = show_filter(settings, lang, options)
             return filter
-        
+
         st.header(lang["boxplot"])
         st.markdown(f"**{self.parameter_label}**")
         st.markdown(lang["intro"])
-        show_average = st.sidebar.checkbox("Show average line")
         df = self.filter_data(get_filter())
-        years = len(df['Year'].unique())
+        years = len(df["Year"].unique())
         min_val = math.floor(df[self.parameter].min())
         max_val = math.ceil(df[self.parameter].max())
         settings = {
@@ -202,16 +200,12 @@ class MonthlyStats:
             "color": "Year:N" if years < 6 else "Year",
             "x_domain": [1, 12],
             "y_domain": [min_val, max_val],
-            "tooltip": ["Month", self.parameter]
+            "tooltip": ["Month", self.parameter],
         }
-        stations = df['Station'].unique()
+        stations = df["Station"].unique()
         for station in stations:
-            df_filtered = df[df['Station'] == station]
+            df_filtered = df[df["Station"] == station]
             settings["title"] = f"{df_filtered.iloc[0]['Stationname']} ({station})"
-            if show_average:
-                mean = df["mean"].mean()
-                df_filtered["mean_all"] = mean
-                settings["h_line"] = 'mean_all'
             line_chart(df_filtered, settings)
             show_download_button(df_filtered)
 
@@ -225,11 +219,10 @@ class MonthlyStats:
             }
             filter = show_filter(settings, lang, options)
             return filter
-        
+
         st.header(lang["heatmap"])
         st.markdown(f"**{self.parameter_label}**")
         st.markdown(lang["intro"])
-        show_average = st.sidebar.checkbox("Show average line")
         df = self.filter_data(get_filter())
         settings = {
             "x": "Month:N",
@@ -239,16 +232,12 @@ class MonthlyStats:
             "height": 400,
             "y_title": self.parameter_label,
             "x_title": lang["month"],
-            "tooltip": ["Month", self.parameter]
+            "tooltip": ["Month", self.parameter],
         }
-        stations = df['Station'].unique()
+        stations = df["Station"].unique()
         for station in stations:
-            df_filtered = df[df['Station'] == station]
+            df_filtered = df[df["Station"] == station]
             settings["title"] = f"{df_filtered.iloc[0]['Stationname']} ({station})"
-            if show_average:
-                mean = df["mean"].mean()
-                df_filtered["mean_all"] = mean
-                settings["h_line"] = 'mean_all'
             heatmap(df_filtered, settings)
             show_download_button(df_filtered)
 
@@ -262,7 +251,7 @@ class MonthlyStats:
             }
             filter = show_filter(settings, lang, options)
             return filter
-        
+
         st.header(lang["time_series"])
         st.markdown(f"**{self.parameter_label}**")
         st.markdown(lang["intro"])
@@ -279,7 +268,7 @@ class MonthlyStats:
             "x_title": lang["month"],
             "y_domain": [min_val, max_val],
             "title": "",
-            "tooltip": ["Month", "Stationname", self.parameter]
+            "tooltip": ["Month", "Stationname", self.parameter],
         }
         time_series_line(df, settings)
         show_download_button(df)
@@ -302,7 +291,7 @@ class MonthlyStats:
         df = self.filter_data(filter)
         min_val = math.floor(df[self.parameter].min())
         max_val = math.ceil(df[self.parameter].max())
-        df_filtered = df[df['Station'] == filter['station']]
+        df_filtered = df[df["Station"] == filter["station"]]
         settings = {
             "month": "Month",
             "year": "Year",
@@ -314,9 +303,11 @@ class MonthlyStats:
             "x_domain": [1, 12],
             "y_domain": [min_val, max_val],
             "tooltip": ["Month", self.parameter],
-            "title": f"{df.iloc[0]['Stationname']} ({filter['station']})"
+            "title": f"{df.iloc[0]['Stationname']} ({filter['station']})",
         }
-        settings["title"] = f"{df_filtered.iloc[0]['Stationname']} ({filter['station']})"
+        settings[
+            "title"
+        ] = f"{df_filtered.iloc[0]['Stationname']} ({filter['station']})"
         line_chart_3d(df_filtered, settings)
         show_download_button(df_filtered)
 
