@@ -15,10 +15,10 @@ from ressources import Ressources
 from monthly_stats import MonthlyStats
 
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __author__ = "Lukas Calmbach"
 __author_email__ = "lcalmbach@gmail.com"
-VERSION_DATE = "2023-07-31"
+VERSION_DATE = "2023-09-31"
 APP_NAME = "ClimateSciGraph"
 GIT_REPO = "https://github.com/lcalmbach/nbcn-browser"
 PAGE = "app"
