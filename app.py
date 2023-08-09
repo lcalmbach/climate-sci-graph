@@ -6,6 +6,8 @@ from helper import get_used_languages, init_lang_dict_complete, get_lang
 from streamlit_option_menu import option_menu
 import re
 import io
+from enum import Enum
+from trend import TrendAnalysis
 
 from about import About
 from stations import Stations
@@ -28,6 +30,23 @@ LOTTIE_URL = "https://lottie.host/016f9a14-ca58-4ade-85fa-ccce6bbc9318/ApQE6zjqW
 STATIONS_URL = "./data/1_download_url_nbcn_homogen.csv"
 
 
+class Menu(Enum):
+    ABOUT = 0
+    STATIONS = 1
+    MONTHLY = 2
+    TREND = 3
+    RESSOURCES = 4
+
+
+def init():
+    st.set_page_config(
+        page_title=APP_NAME,
+        page_icon="🌡️",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+
+
 def get_menu_option():
     menu_options = lang["menu-options"]
     # https://icons.getbootstrap.com/
@@ -36,7 +55,7 @@ def get_menu_option():
         return option_menu(
             None,
             menu_options,
-            icons=["house", "broadcast", "calendar-month", "archive"],
+            icons=["house", "geo", "calendar-month", "graph-up", "archive"],
             menu_icon="cast",
             default_index=0,
         )
@@ -53,12 +72,12 @@ def get_app_info():
     version = lang["version"]
     translation = lang["translation"]
     data_source = lang["data-source"]
-    
+
     info = f"""<div style="background-color:powderblue; padding: 10px;border-radius: 15px;">
     <small>{created_by} <a href="mailto:{__author_email__}">{__author__}</a><br>
     {version}: {__version__} ({VERSION_DATE})<br>
     {data_source}: <a href="https://www.meteoswiss.admin.ch/services-and-publications/applications/ext/climate-tables-homogenized.html">MeteoSwiss</a><br>
-    {powered_by} <a href="https://streamlit.io/">Streamlit</a><br>
+    {powered_by} <a href="https://streamlit.io/">Streamlit</a>, <a href="https://github.com/mmhs013/pymannkendall">pymannkendall</a><br>
     {translation} <a href="https://lcalmbach-gpt-translate-app-i49g8c.streamlit.app/">PolyglotGPT</a><br>
     <a href="{GIT_REPO}">git-repo</a><br>
     """
@@ -200,6 +219,7 @@ def main() -> None:
     """
     global lang
 
+    init()
     if not ("lang" in st.session_state):
         # first item is default language
         st.session_state["lang_dict"] = {}
@@ -217,13 +237,15 @@ def main() -> None:
     show_lottie()
 
     sel_menu_option = get_menu_option()
-    if lang["menu-options"].index(sel_menu_option) == 0:
+    if lang["menu-options"].index(sel_menu_option) == Menu.ABOUT.value:
         app = About(APP_NAME)
-    elif lang["menu-options"].index(sel_menu_option) == 1:
+    elif lang["menu-options"].index(sel_menu_option) == Menu.STATIONS.value:
         app = Stations()
-    elif lang["menu-options"].index(sel_menu_option) == 2:
+    elif lang["menu-options"].index(sel_menu_option) == Menu.MONTHLY.value:
         app = MonthlyStats()
-    elif lang["menu-options"].index(sel_menu_option) == 3:
+    elif lang["menu-options"].index(sel_menu_option) == Menu.TREND.value:
+        app = TrendAnalysis()
+    elif lang["menu-options"].index(sel_menu_option) == Menu.RESSOURCES.value:
         app = Ressources()
     app.run()
     display_language_selection()

@@ -190,6 +190,7 @@ def time_series_chart(df, settings):
     #    x= 'x',
     #    y= 'y'
     #    )
+
     title = settings["title"] if "title" in settings else ""
     if "x_title" not in settings:
         settings["x_title"] = ""
@@ -213,7 +214,7 @@ def time_series_chart(df, settings):
         )
     )
     if "show_regression" in settings:
-        if settings["show_regression"]:
+        if len(df) > 2 and settings["show_regression"]:
             line = plot.transform_regression(settings["x"], settings["y"]).mark_line(
                 color="orange"
             )

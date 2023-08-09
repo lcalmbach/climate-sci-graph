@@ -5,3 +5,5 @@ streamlit_option_menu==0.3.6
 folium==0.14.0
 streamlit_folium==0.13.0
 plotly==5.15.0
+pymannkendall==1.4.3
+scipy
