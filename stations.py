@@ -3,6 +3,7 @@ import os
 
 from helper import init_lang_dict_complete, get_lang
 from plots import map_chart
+from helper import show_download_button
 
 PAGE = __name__
 lang = {}
@@ -14,7 +15,7 @@ class Stations:
 
         init_lang_dict_complete(os.path.basename(__file__), __name__)
         lang = get_lang(PAGE)
-        self.stations_summary_df = st.session_state["stations_url"].reset_index()
+        self.stations_summary_df = st.session_state["station_url"].reset_index()
         self.stations_summary_df = self.add_station_info_link(self.stations_summary_df)
 
     def add_station_info_link(self, df):
@@ -27,8 +28,33 @@ class Stations:
         return df
 
     def show_map(self):
-        num_of_stations = len(self.stations_summary_df)
+        def format_popup_row(row):
+            col_titles = df.columns
+            result = f"""<table><tr>
+                        <td>{col_titles[0]}</td>
+                        <td>{row[col_titles[0]]}</td>
+                        <tr>
+                        <td>{col_titles[1]}</td>
+                        <td>{row[col_titles[1]]}</td>
+                        <tr>
+                        <td>{col_titles[4]}</td>
+                        <td>{row[col_titles[4]]}</td>
+                        </tr>
+                        <tr>
+                        <td>{col_titles[9]}</td>
+                        <td>{row[col_titles[9]]}</td>
+                        </tr>
+                        <tr>
+                        <td>{col_titles[10]}</td>
+                        <td>{row[col_titles[10]]}</td>
+                        </tr>
+                        </table>"""
+            return result
 
+        df = self.stations_summary_df
+        
+        df['tooltip'] = df.apply(format_popup_row, axis=1)
+        num_of_stations = len(self.stations_summary_df)
         st.header("Map")
         st.markdown(lang["intro"].format(num_of_stations))
         settings = {
@@ -36,11 +62,11 @@ class Stations:
             "longitude": "Longitude",
             "width": 800,
             "height": 400,
-            "tooltip": "Station",
+            "tooltip": "tooltip",
             "popup": "Station",
             "zoom_start": 7,
         }
-        map_json = map_chart(self.stations_summary_df, settings)
+        map_json = map_chart(df, settings)
         if map_json["last_object_clicked_popup"] is not None:
             station = map_json["last_object_clicked_popup"]
             row = self.stations_summary_df[
@@ -62,7 +88,25 @@ class Stations:
 
         st.header(lang["summary-table"])
         st.markdown(lang["summary-table-intro"].format(num_of_stations))
-        st.dataframe(self.stations_summary_df)
+        fields = [
+            "Abbreviation",
+            "Station",
+            "WIGOS-ID",
+            "Data since",
+            "Station height m. a. sea level",
+            "CoordinatesE",
+            "CoordinatesN",
+            "Latitude",
+            "Longitude",
+            "Climate region",
+            "Canton",
+        ]
+        df = self.stations_summary_df[fields]
+        df.columns = lang["table_column_titles"]
+        st.dataframe(df, use_container_width=True, hide_index=True)
+        show_download_button(
+            self.stations_summary_df, {"button_text": lang["download_button_text"]}
+        )
 
     def run(self):
         sel_menu = st.sidebar.selectbox(

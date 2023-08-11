@@ -8,8 +8,6 @@ import string
 import random
 import pandas as pd
 
-lang_dict_complete = {}
-
 
 def init_lang_dict_complete(module: str, key: str):
     """
@@ -18,7 +16,6 @@ def init_lang_dict_complete(module: str, key: str):
     Returns:
     - lang (dict): A Python dictionary containing all the language strings.
     """
-    global lang_dict_complete
 
     lang_file = f"./lang/{module.replace('.py','.json')}"
     try:
@@ -58,7 +55,17 @@ def get_used_languages(lang_dict: dict):
     return extracted_dict
 
 
-def get_lang(page: str):
+def get_lang(page: str) -> dict:
+    """Retrieves the dictionary from the session statethe hierarchical 
+    organisation is lang_dict, then one key for ever py file (module)
+
+    Args:
+        page (str): every py file with multilang commands must have a file 
+                    with the same name and extension json in the lang folder
+
+    Returns:
+        _type_: _description_
+    """
     return st.session_state["lang_dict"][page][st.session_state["lang"]]
 
 
@@ -168,8 +175,6 @@ def randomword(length):
 
 
 def show_download_button(df: pd.DataFrame, cfg: dict = {}):
-    if "button_text" not in cfg:
-        cfg["button_text"] = "Download table"
     if "filename" not in cfg:
         cfg["filename"] = "file.csv"
     key = randomword(10)

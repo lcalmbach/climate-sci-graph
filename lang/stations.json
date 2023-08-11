@@ -1,1 +1,112 @@
-{"source": {"analysis": "Analysis", "analysis-options": ["Map", "Summary Table"], "title": "NBCN-Stations", "intro": "This section summarizes the information for the {} swiss NBCN-climate stations measuring temperature data. Additional stations exist with only precipitaiton data but are not included here. See the ressources section for additional information on these stations.", "summary-table": "Summary table for Swiss NBCN stations", "summary-table-intro": "This table summarizes the information on the Swiss NBCN climate stations with long-term temperature data."}, "en": {"analysis": "Analysis", "analysis-options": ["Map", "Summary Table"], "title": "NBCN-Stations", "intro": "This section summarizes the information for the {} swiss NBCN-climate stations measuring temperature data. Additional stations exist with only precipitaiton data but are not included here. See the ressources section for additional information on these stations.", "summary-table": "Summary table for Swiss NBCN stations", "summary-table-intro": "This table summarizes the information on the Swiss NBCN climate stations with long-term temperature data."}, "de": {"analysis": "Analyse", "analysis-options": ["Karte", "Zusammenfassungstabelle"], "title": "NBCN-Stationen", "intro": "Dieser Abschnitt fasst die Informationen f\u00fcr die {} schweizerischen NBCN-Klimastationen zusammen, die Temperaturdaten messen. Weitere Stationen existieren nur mit Niederschlagsdaten, sind aber hier nicht enthalten. Weitere Informationen zu diesen Stationen finden Sie im Ressourcenbereich.", "summary-table": "Zusammenfassungstabelle f\u00fcr Schweizer NBCN-Stationen", "summary-table-intro": "Diese Tabelle fasst die Informationen zu den schweizerischen NBCN-Klimastationen mit langfristigen Temperaturdaten zusammen."}, "fr": {"analysis": "Analyse", "analysis-options": ["Carte", "Tableau r\u00e9capitulatif"], "title": "Stations NBCN", "intro": "Cette section r\u00e9sume les informations sur les stations climatiques NBCN suisses mesurant les donn\u00e9es de temp\u00e9rature. D'autres stations existent avec seulement des donn\u00e9es de pr\u00e9cipitations mais ne sont pas incluses ici. Consultez la section ressources pour plus d'informations sur ces stations.", "summary-table": "Tableau r\u00e9capitulatif des stations NBCN suisses", "summary-table-intro": "Ce tableau r\u00e9sume les informations sur les stations climatiques NBCN suisses avec des donn\u00e9es de temp\u00e9rature \u00e0 long terme."}, "it": {"analysis": "Analisi", "analysis-options": ["Mappa", "Tabella di riepilogo"], "title": "NBCN-Stazioni", "intro": "Questa sezione riassume le informazioni per le stazioni climatiche NBCN svizzere che misurano i dati di temperatura. Esistono altre stazioni con solo dati di precipitazione ma non sono incluse qui. Consultare la sezione risorse per ulteriori informazioni su queste stazioni.", "summary-table": "Tabella di riepilogo per le stazioni NBCN svizzere", "summary-table-intro": "Questa tabella riassume le informazioni sulle stazioni climatiche NBCN svizzere con dati di temperatura a lungo termine."}}
+{
+  "source": {
+    "analysis": "Analysis",
+    "analysis-options": ["Map", "Summary Table"],
+    "title": "NBCN-Stations",
+    "intro": "This section summarizes the information for the {} Swiss NBCN-climate stations measuring temperature and precipitation data. Additional stations exist with only precipitaiton data but are not included here. See the ressources section for additional information on these stations. Click on the markers to show additional station info below the map.",
+    "summary-table": "Summary table for Swiss NBCN stations",
+    "summary-table-intro": "This table summarizes the information on the Swiss NBCN climate stations with long-term temperature and precipitation data.",
+    "download_button_text": "Download Stations",
+    "table_column_titles": [
+      "Station-ID",
+      "Station",
+      "WIGOS-ID",
+      "Data since",
+      "Station elevation masl",
+      "CoordinatesE",
+      "CoordinatesN",
+      "Latitude",
+      "Longitude",
+      "Climate region",
+      "Canton"
+    ]
+  },
+  "en": {
+    "analysis": "Analysis",
+    "analysis-options": ["Map", "Summary Table"],
+    "title": "NBCN-Stations",
+    "intro": "This section summarizes the information for the {} Swiss NBCN-climate stations measuring temperature and precipitation data. Additional stations exist with only precipitaiton data but are not included here. See the ressources section for additional information on these stations. Click on the markers to show additional station info below the map.",
+    "summary-table": "Summary table for Swiss NBCN stations",
+    "summary-table-intro": "This table summarizes the information on the Swiss NBCN climate stations with long-term temperature and precipitation data.",
+    "download_button_text": "Download Stations",
+    "table_column_titles": [
+      "Abbreviation",
+      "Station",
+      "WIGOS-ID",
+      "Data since",
+      "Station elevation masl",
+      "CoordinatesE",
+      "CoordinatesN",
+      "Latitude",
+      "Longitude",
+      "Climate region",
+      "Canton"
+    ]
+  },
+  "de": {
+    "analysis": "Analyse",
+    "analysis-options": ["Karte", "Zusammenfassungstabelle"],
+    "title": "NBCN-Stationen",
+    "intro": "Dieser Abschnitt fasst die Informationen f\u00fcr die {} Schweizer NBCN-Klimastationen zusammen, die Temperatur- und Niederschlagsdaten messen. Es gibt weitere Stationen, die nur Niederschlagsdaten haben, aber hier nicht aufgef\u00fchrt sind. Weitere Informationen zu diesen Stationen finden Sie im Ressourcenbereich. Klicken Sie auf die Marker, um zus\u00e4tzliche Stationsinformationen unterhalb der Karte anzuzeigen.",
+    "summary-table": "Zusammenfassungstabelle f\u00fcr Schweizer NBCN-Stationen",
+    "summary-table-intro": "Diese Tabelle fasst die Informationen zu den Schweizer NBCN-Klimastationen mit langfristigen Temperatur- und Niederschlagsdaten zusammen.",
+    "download_button_text": "Stationen herunterladen",
+    "table_column_titles": [
+      "Abk\u00fcrzung",
+      "Station",
+      "WIGOS-ID",
+      "Daten seit",
+      "Stationsh\u00f6he m \u00fc. M.",
+      "Koordinaten E",
+      "Koordinaten N",
+      "Breitengrad",
+      "L\u00e4ngengrad",
+      "Klimaregion",
+      "Kanton"
+    ]
+  },
+  "fr": {
+    "analysis": "Analyse",
+    "analysis-options": ["Carte", "Tableau r\u00e9capitulatif"],
+    "title": "Stations NBCN",
+    "intro": "Cette section r\u00e9sume les informations sur les stations climatiques NBCN suisses mesurant les donn\u00e9es de temp\u00e9rature et de pr\u00e9cipitations. Des stations suppl\u00e9mentaires existent avec uniquement des donn\u00e9es de pr\u00e9cipitations mais ne sont pas incluses ici. Consultez la section ressources pour plus d'informations sur ces stations. Cliquez sur les marqueurs pour afficher des informations suppl\u00e9mentaires sur la station ci-dessous la carte.",
+    "summary-table": "Tableau r\u00e9capitulatif des stations NBCN suisses",
+    "summary-table-intro": "Ce tableau r\u00e9sume les informations sur les stations climatiques NBCN suisses avec des donn\u00e9es de temp\u00e9rature et de pr\u00e9cipitations \u00e0 long terme.",
+    "download_button_text": "T\u00e9l\u00e9charger les stations",
+    "table_column_titles": [
+      "Abr\u00e9viation",
+      "Station",
+      "ID WIGOS",
+      "Donn\u00e9es depuis",
+      "Altitude de la station en m\u00e8tres",
+      "Coordonn\u00e9es E",
+      "Coordonn\u00e9es N",
+      "Latitude",
+      "Longitude",
+      "R\u00e9gion climatique",
+      "Canton"
+    ]
+  },
+  "it": {
+    "analysis": "Analisi",
+    "analysis-options": ["Mappa", "Tabella di riepilogo"],
+    "title": "Stazioni NBCN",
+    "intro": "Questa sezione riassume le informazioni per le stazioni climatiche NBCN svizzere che misurano i dati di temperatura e precipitazioni. Esistono altre stazioni con solo dati di precipitazioni ma non sono incluse qui. Consultare la sezione risorse per ulteriori informazioni su queste stazioni. Fare clic sui marcatori per mostrare ulteriori informazioni sulla stazione sotto la mappa.",
+    "summary-table": "Tabella di riepilogo per le stazioni NBCN svizzere",
+    "summary-table-intro": "Questa tabella riassume le informazioni sulle stazioni climatiche NBCN svizzere con dati di temperatura e precipitazioni a lungo termine.",
+    "download_button_text": "Scarica stazioni",
+    "table_column_titles": [
+      "Abbreviazione",
+      "Stazione",
+      "ID WIGOS",
+      "Dati dal",
+      "Elevazione stazione m s.l.m.",
+      "Coordinate E",
+      "Coordinate N",
+      "Latitudine",
+      "Longitudine",
+      "Regione climatica",
+      "Cantone"
+    ]
+  }
+}

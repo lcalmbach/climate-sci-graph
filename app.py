@@ -8,6 +8,7 @@ import re
 import io
 from enum import Enum
 from trend import TrendAnalysis
+import datetime
 
 from about import About
 from stations import Stations
@@ -45,6 +46,17 @@ def init():
         layout="wide",
         initial_sidebar_state="expanded",
     )
+    if not ("lang" in st.session_state):
+        # first item is default language
+        st.session_state["lang_dict"] = {}
+        init_lang_dict_complete("app.py", PAGE)
+        st.session_state["used_languages_dict"] = get_used_languages(
+            st.session_state["lang_dict"][PAGE]
+        )
+        st.session_state["lang"] = next(
+            iter(st.session_state["used_languages_dict"].items())
+        )[0]
+        st.session_state["last_data_refresh"] = datetime.datetime.now().strftime("%x")
 
 
 def get_menu_option():
@@ -220,20 +232,10 @@ def main() -> None:
     global lang
 
     init()
-    if not ("lang" in st.session_state):
-        # first item is default language
-        st.session_state["lang_dict"] = {}
-        init_lang_dict_complete("app.py", PAGE)
-        st.session_state["used_languages_dict"] = get_used_languages(
-            st.session_state["lang_dict"][PAGE]
-        )
-        st.session_state["lang"] = next(
-            iter(st.session_state["used_languages_dict"].items())
-        )[0]
 
     lang = get_lang(PAGE)
     with st.spinner(lang["loading-data"]):
-        st.session_state["station_data"], st.session_state["stations_url"] = get_data()
+        st.session_state["station_data"], st.session_state["station_url"] = get_data()
     show_lottie()
 
     sel_menu_option = get_menu_option()

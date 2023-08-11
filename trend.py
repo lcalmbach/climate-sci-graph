@@ -57,7 +57,7 @@ class TrendAnalysis:
         return df
 
     def get_station_dict(self):
-        df = st.session_state["stations_url"].reset_index()
+        df = st.session_state["station_url"].reset_index()
         keys = list(df["Abbreviation"])
         values = list(df["Station"])
         return dict(zip(keys, values))
