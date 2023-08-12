@@ -52,8 +52,8 @@ class Stations:
             return result
 
         df = self.stations_summary_df
-        
-        df['tooltip'] = df.apply(format_popup_row, axis=1)
+
+        df["tooltip"] = df.apply(format_popup_row, axis=1)
         num_of_stations = len(self.stations_summary_df)
         st.header("Map")
         st.markdown(lang["intro"].format(num_of_stations))

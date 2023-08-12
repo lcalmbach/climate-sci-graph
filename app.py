@@ -13,13 +13,13 @@ import datetime
 from about import About
 from stations import Stations
 from ressources import Ressources
-from monthly_stats import MonthlyStats
+from ncbn_stats import NCBNStats
 
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __author__ = "Lukas Calmbach"
 __author_email__ = "lcalmbach@gmail.com"
-VERSION_DATE = "2023-09-31"
+VERSION_DATE = "2023-08-12"
 APP_NAME = "ClimateSciGraph"
 GIT_REPO = "https://github.com/lcalmbach/nbcn-browser"
 PAGE = "app"
@@ -244,7 +244,7 @@ def main() -> None:
     elif lang["menu-options"].index(sel_menu_option) == Menu.STATIONS.value:
         app = Stations()
     elif lang["menu-options"].index(sel_menu_option) == Menu.MONTHLY.value:
-        app = MonthlyStats()
+        app = NCBNStats()
     elif lang["menu-options"].index(sel_menu_option) == Menu.TREND.value:
         app = TrendAnalysis()
     elif lang["menu-options"].index(sel_menu_option) == Menu.RESSOURCES.value:

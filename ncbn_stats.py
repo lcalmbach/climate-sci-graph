@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import pandas as pd
 import math
 
 from helper import init_lang_dict_complete, get_lang, show_filter, show_download_button
@@ -16,7 +17,7 @@ PAGE = __name__
 lang = {}
 
 
-class MonthlyStats:
+class NCBNStats:
     def __init__(self):
         global lang
 
@@ -24,11 +25,48 @@ class MonthlyStats:
         lang = get_lang(PAGE)
         self.data_df = st.session_state["station_data"]
         self.stations_dict = self.get_station_dict()
-        # self.stat_function_dict = self.get_stat_function_dict()
         self.parameters_dict = self.get_parameter_dict()
         self.min_year, self.max_year = self.get_min_max_year()
         self.parameter_label = ""
         self.parameter = ""
+        self.time_aggregation = "month"
+        self.analysis_options_keys = [
+            "summary_table",
+            "barchart",
+            "boxplots",
+            "superposed-line",
+            "heatmap",
+            "time-series",
+            "spiral",
+        ]
+        self.sel_analysis = None
+
+    def get_agg_function(self):
+        agg_function = (
+            "sum"
+            if (self.time_aggregation == "Year") & (self.parameter == "Precipitation")
+            else "mean"
+        )
+        return agg_function
+
+    def get_line_settings(self, df, par, settings):
+        if self.show_average:
+            value = df[par].mean()
+            df["_value"] = value
+            settings["h_line"] = "_value"
+        return settings
+
+    def get_analysis_options(self) -> dict:
+        """Removes some analasysis methods from the options, which do not make sense for yearly values
+
+        Returns:
+            dict: cleaned analysis dict
+        """
+        options = lang["analysis-options"]
+        if self.time_aggregation != "Month":
+            elements_remove = [options[2], options[3], options[4], options[6]]
+            options = [x for x in options if x not in elements_remove]
+        return options
 
     def get_min_max_year(self):
         min_year = self.data_df["Year"].min()
@@ -82,14 +120,18 @@ class MonthlyStats:
 
         df = self.filter_data(get_filter())
         df = (
-            df.groupby(["Stationname", "Station", "Month"])[self.parameter]
+            df.groupby(["Stationname", "Station", self.time_aggregation])[
+                self.parameter
+            ]
             .agg(["min", "max", "mean"])
             .reset_index()
         )
         col_config = {
             "Station Name": st.column_config.Column(lang["station_name"]),
             "Station": st.column_config.Column(lang["station"]),
-            "Month": st.column_config.Column(lang["month"]),
+            self.time_aggregation: st.column_config.Column(
+                lang[self.time_aggregation.lower()]
+            ),
             "min": st.column_config.Column(lang["min"] + f" {self.parameter_label}"),
             "max": st.column_config.Column(lang["max"] + f" {self.parameter_label}"),
             "mean": st.column_config.Column(lang["mean"] + f" {self.parameter_label}"),
@@ -119,31 +161,30 @@ class MonthlyStats:
                 self.parameter_label, int(df["Year"].min()), int(df["Year"].max())
             )
         )
-        show_average = st.sidebar.checkbox("Show average line")
 
+        agg_func = self.get_agg_function()
         df = (
-            df.groupby(["Stationname", "Station", "Month"])[self.parameter]
-            .agg(["min", "max", "mean"])
+            df.groupby(["Stationname", "Station", self.time_aggregation])[
+                self.parameter
+            ]
+            .agg([agg_func])
             .reset_index()
         )
         settings = {
-            "x": "Month",
-            "y": "mean",
+            "x": self.time_aggregation,
+            "y": agg_func,
             "width": 800,
             "height": 400,
             "y_title": self.parameter_label,
-            "x_title": lang["month"],
-            "bar_width": 20,
+            "x_title": lang[self.time_aggregation.lower()],
         }
         stations = df["Station"].unique()
         for station in stations:
-            df_filtered = df[(df["Station"] == station) & (df["mean"].notna())]
+            df_filtered = df[(df["Station"] == station) & (df[agg_func].notna())]
             if len(df_filtered) > 0:
                 settings["title"] = f"{df_filtered.iloc[0]['Stationname']} ({station})"
-                if show_average:
-                    mean = df["mean"].mean()
-                    df_filtered["mean_all"] = mean
-                    settings["h_line"] = "mean_all"
+                settings["bar_width"] = 800 / len(df_filtered) * 0.5
+                settings = self.get_line_settings(df_filtered, agg_func, settings)
                 bar_chart(df_filtered, settings)
                 show_download_button(
                     df_filtered, {"button_text": lang["download_button_text"]}
@@ -198,20 +239,43 @@ class MonthlyStats:
         st.markdown(f"**{self.parameter_label}**")
         st.markdown(lang["intro"])
         df = self.filter_data(get_filter())
-        years = len(df["Year"].unique())
+        if self.time_aggregation == "Year":
+            df = (
+                df.groupby(["Stationname", "Station", self.time_aggregation])[
+                    self.parameter
+                ]
+                .agg(["mean"])
+                .reset_index()
+            )
+            df.columns = [
+                "Stationname",
+                "Station",
+                self.time_aggregation,
+                self.parameter,
+            ]
+            x_domain = [
+                df[self.time_aggregation].min(),
+                df[self.time_aggregation].max(),
+            ]
+            color = None
+        else:
+            years = len(df["Year"].unique())
+            x_domain = [1, 12]
+            color = "Year:N" if years < 6 else "Year"
+
         min_val = math.floor(df[self.parameter].min())
         max_val = math.ceil(df[self.parameter].max())
         settings = {
-            "x": "Month",
+            "x": self.time_aggregation,
             "y": self.parameter,
             "width": 800,
             "height": 400,
             "y_title": self.parameter_label,
-            "x_title": lang["month"],
-            "color": "Year:N" if years < 6 else "Year",
-            "x_domain": [1, 12],
+            "x_title": lang[self.time_aggregation.lower()],
+            "x_domain": x_domain,
             "y_domain": [min_val, max_val],
-            "tooltip": ["Month", self.parameter],
+            "color": color,
+            "tooltip": [self.time_aggregation, self.parameter],
         }
         stations = df["Station"].unique()
         for station in stations:
@@ -270,9 +334,23 @@ class MonthlyStats:
         st.header(lang["time_series"])
         st.markdown(f"**{self.parameter_label}**")
         st.markdown(lang["intro"])
+        agg_func = self.get_agg_function()
         df = self.filter_data(get_filter())
-        min_val = math.floor(df[self.parameter].min())
-        max_val = math.ceil(df[self.parameter].max())
+        if self.time_aggregation == "Year":
+            df["Day"] = 15
+            df["Month"] = 7
+            df["Date"] = pd.to_datetime(df[["Year", "Month", "Day"]])
+            df = (
+                df.groupby(["Stationname", "Station", "Year", "Date"])[self.parameter]
+                .agg([agg_func])
+                .reset_index()
+            )
+            df.columns = ["Stationname", "Station", "Year", "Date", self.parameter]
+            tooltip = ["Year", "Stationname", self.parameter]
+        else:
+            tooltip = ["Date", "Stationname", self.parameter]
+        min_val = math.floor(df[self.parameter].min()) - 1
+        max_val = math.ceil(df[self.parameter].max()) + 1
         settings = {
             "x": "Date",
             "y": self.parameter,
@@ -280,11 +358,12 @@ class MonthlyStats:
             "width": 800,
             "height": 400,
             "y_title": self.parameter_label,
-            "x_title": lang["month"],
+            "x_title": lang["year"],
             "y_domain": [min_val, max_val],
             "title": "",
-            "tooltip": ["Month", "Stationname", self.parameter],
+            "tooltip": tooltip,
         }
+        settings = self.get_line_settings(df, self.parameter, settings)
         time_series_line(df, settings)
         show_download_button(df, {"button_text": lang["download_button_text"]})
 
@@ -326,29 +405,48 @@ class MonthlyStats:
         line_chart_3d(df_filtered, settings)
         show_download_button(df_filtered, {"button_text": lang["download_button_text"]})
 
-    def run(self):
+    def get_parameters(self):
         # "Summary table", "Barcharts", "Boxplots", "Superposed lines", "Heatmap", "Time Series", "3D Spiral"
-        sel_menu = st.sidebar.selectbox(
-            label=lang["analysis"], options=lang["analysis-options"]
-        )
-        self.parameter = st.sidebar.selectbox(
-            label=lang["parameter"],
-            options=list(self.parameters_dict.keys()),
-            format_func=lambda x: self.parameters_dict[x],
-        )
-        self.parameter_label = self.parameters_dict[self.parameter]
+        with st.sidebar.expander(f"⚙️{lang['settings']}", expanded=True):
+            time_aggregation_options = {
+                "Month": lang["monthly"],
+                "Year": lang["yearly"],
+            }
+            self.time_aggregation = st.selectbox(
+                label=lang["time_aggregation"],
+                options=list(time_aggregation_options.keys()),
+                format_func=lambda x: time_aggregation_options[x],
+            )
+            analysis_options = self.get_analysis_options()
+            sel_analysis = st.selectbox(
+                label=lang["analysis"],
+                options=analysis_options,
+            )
+            self.parameter = st.selectbox(
+                label=lang["parameter"],
+                options=list(self.parameters_dict.keys()),
+                format_func=lambda x: self.parameters_dict[x],
+            )
+            if lang["analysis-options"].index(sel_analysis) in (1, 5):
+                self.show_average = st.checkbox(lang["show-average-line"])
+            self.parameter_label = self.parameters_dict[self.parameter]
 
-        if lang["analysis-options"].index(sel_menu) == 0:
+            return sel_analysis
+
+    def run(self):
+        sel_analysis = self.get_parameters()
+
+        if lang["analysis-options"].index(sel_analysis) == 0:
             self.show_summary_table()
-        elif lang["analysis-options"].index(sel_menu) == 1:
+        elif lang["analysis-options"].index(sel_analysis) == 1:
             self.show_barchart()
-        elif lang["analysis-options"].index(sel_menu) == 2:
+        elif lang["analysis-options"].index(sel_analysis) == 2:
             self.show_boxplot()
-        elif lang["analysis-options"].index(sel_menu) == 3:
+        elif lang["analysis-options"].index(sel_analysis) == 3:
             self.show_superposed_lines()
-        elif lang["analysis-options"].index(sel_menu) == 4:
+        elif lang["analysis-options"].index(sel_analysis) == 4:
             self.show_heatmap()
-        elif lang["analysis-options"].index(sel_menu) == 5:
+        elif lang["analysis-options"].index(sel_analysis) == 5:
             self.show_time_series()
-        elif lang["analysis-options"].index(sel_menu) == 6:
+        elif lang["analysis-options"].index(sel_analysis) == 6:
             self.show_spiral()

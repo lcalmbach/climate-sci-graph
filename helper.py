@@ -56,11 +56,11 @@ def get_used_languages(lang_dict: dict):
 
 
 def get_lang(page: str) -> dict:
-    """Retrieves the dictionary from the session statethe hierarchical 
+    """Retrieves the dictionary from the session statethe hierarchical
     organisation is lang_dict, then one key for ever py file (module)
 
     Args:
-        page (str): every py file with multilang commands must have a file 
+        page (str): every py file with multilang commands must have a file
                     with the same name and extension json in the lang folder
 
     Returns:
@@ -138,7 +138,7 @@ def show_filter(settings: dict, lang: dict, options: dict):
         options (dict): holds the required options lists and mandatory parameters such as min, max for a slider
     """
     with st.sidebar:
-        with st.expander("Filter", expanded=True):
+        with st.expander(f"🔎{lang['filter']}", expanded=True):
             if "" in settings:
                 settings["parameter"] = st.selectbox(
                     lang["parameter"], options["parameter_list"]

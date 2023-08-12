@@ -36,24 +36,44 @@ def line_chart(df, settings):
         settings["x_dt"] = "Q"
     if "y_dt" not in settings:
         settings["y_dt"] = "Q"
-    chart = (
-        alt.Chart(df)
-        .mark_line(width=2, clip=True, opacity=0.5)
-        .encode(
-            x=alt.X(
-                f"{settings['x']}:{settings['x_dt']}",
-                scale=alt.Scale(domain=settings["x_domain"]),
-            ),
-            y=alt.Y(
-                f"{settings['y']}:{settings['y_dt']}",
-                scale=alt.Scale(domain=settings["y_domain"]),
-            ),
-            tooltip=settings["tooltip"],
-            color=alt.Color(
-                settings["color"], scale=alt.Scale(scheme="redblue", reverse=True)
-            ),
+
+    if "color" in settings and settings["color"] is not None:
+        chart = (
+            alt.Chart(df)
+            .mark_line(width=2, clip=True, opacity=0.5)
+            .encode(
+                x=alt.X(
+                    f"{settings['x']}:{settings['x_dt']}",
+                    scale=alt.Scale(domain=settings["x_domain"]),
+                ),
+                y=alt.Y(
+                    f"{settings['y']}:{settings['y_dt']}",
+                    scale=alt.Scale(domain=settings["y_domain"]),
+                ),
+                color=alt.Color(
+                    settings["color"], scale=alt.Scale(scheme="redblue", reverse=True)
+                ),
+                tooltip=settings["tooltip"],
+            )
         )
-    )
+    else:
+        st.write(4344)
+        chart = (
+            alt.Chart(df)
+            .mark_line(width=2, clip=True, opacity=0.5)
+            .encode(
+                x=alt.X(
+                    f"{settings['x']}:{settings['x_dt']}",
+                    scale=alt.Scale(domain=settings["x_domain"]),
+                ),
+                y=alt.Y(
+                    f"{settings['y']}:{settings['y_dt']}",
+                    scale=alt.Scale(domain=settings["y_domain"]),
+                ),
+                tooltip=settings["tooltip"],
+            )
+        )
+
     if "regression" in settings:
         line = chart.transform_regression(settings["x"], settings["y"]).mark_line()
         plot = (chart + line).properties(

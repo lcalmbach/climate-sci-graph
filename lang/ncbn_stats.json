@@ -1,7 +1,7 @@
 {
   "source": {
-    "title": "Monthly Statistics",
-    "intro": "Monthly statistics showing various statistical indicator values per station with minimum, maximum, and mean temperature for every month. These statistics were calculated based on the monthly average. For example, the maximum temperature for Altdorf in January refers to the maximum mean temperature of this month, not the maximum temperature ever measured in this month. Select a menu-option in the sideboard `Analysis`-menu to show the statistics in various charts. The `Parameter` selection allows to switch between temperature and precipitation.",
+    "title": "Statistics",
+    "intro": "Monthly or yearly statistics showing various statistical indicator values per station with minimum, maximum, and mean temperature for every month. These statistics were calculated based on the monthly average. For example, the maximum temperature for Altdorf in January refers to the maximum mean temperature of this month, not the maximum temperature ever measured in this month. Select a menu-option in the sideboard `Analysis`-menu to show the statistics in various charts. The `Parameter` selection allows to switch between temperature and precipitation.",
     "analysis": "Analysis",
     "analysis-options": [
       "Summary table",
@@ -15,7 +15,7 @@
     "parameter": "Parameter",
     "filter": "Filter",
     "stat-functions": ["Minimum", "Maximum", "Average"],
-    "show-average-line": "Shwo Average Line",
+    "show-average-line": "Show Average Line",
     "years": "Years",
     "months": "Months",
     "parameters": ["Temperature [\u00b0C]", "Precipitation[mm]"],
@@ -35,11 +35,17 @@
     "time_series": "Time Series",
     "3d_spiral": "3D Spiral",
     "no_data": "Sorry, there is no data available for this parameter and time period.",
-    "download_button_text": "Download data"
+    "download_button_text": "Download data",
+    "time_aggregation": "Statistics",
+    "monthly": "Monthly values",
+    "yearly": "Yearly values",
+    "settings": "Settings",
+    "year": "Year",
+    "show_average_line": "Show average line"
   },
   "en": {
-    "title": "Monthly Statistics",
-    "intro": "Monthly statistics showing various statistical indicator values per station with minimum, maximum, and mean temperature for every month. These statistics were calculated based on the monthly average. For example, the maximum temperature for Altdorf in January refers to the maximum mean temperature of this month, not the maximum temperature ever measured in this month. Select a menu-option in the sideboard `Analysis`-menu to show the statistics in various charts. The `Parameter` selection allows to switch between temperature and precipitation.",
+    "title": "Statistics",
+    "intro": "Monthly or yearly statistics showing various statistical indicator values per station with minimum, maximum, and mean temperature for every month. These statistics were calculated based on the monthly average. For example, the maximum temperature for Altdorf in January refers to the maximum mean temperature of this month, not the maximum temperature ever measured in this month. Select a menu-option in the sideboard `Analysis`-menu to show the statistics in various charts. The `Parameter` selection allows to switch between temperature and precipitation.",
     "analysis": "Analysis",
     "analysis-options": [
       "Summary table",
@@ -53,7 +59,7 @@
     "parameter": "Parameter",
     "filter": "Filter",
     "stat-functions": ["Minimum", "Maximum", "Average"],
-    "show-average-line": "Shwo Average Line",
+    "show-average-line": "Show Average Line",
     "years": "Years",
     "months": "Months",
     "parameters": ["Temperature [\u00b0C]", "Precipitation[mm]"],
@@ -73,7 +79,12 @@
     "time_series": "Time Series",
     "3d_spiral": "3D Spiral",
     "no_data": "Sorry, there is no data available for this parameter and time period.",
-    "download_button_text": "Download data"
+    "download_button_text": "Download data",
+    "time_aggregation": "Statistics",
+    "monthly": "Monthly values",
+    "yearly": "Yearly values",
+    "settings": "Settings",
+    "year": "Year",
   },
   "de": {
     "title": "Monatliche Statistiken",
