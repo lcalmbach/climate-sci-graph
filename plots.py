@@ -7,7 +7,7 @@ import altair as alt
 import folium
 from streamlit_folium import st_folium
 
-import const as cn
+from helper import round_to_nearest
 
 
 def map_chart(df, settings):
@@ -374,17 +374,18 @@ def box_plot(df: pd.DataFrame, settings: dict):
 def histogram(df: pd.DataFrame, settings: dict):
     def get_x_domain():
         x_domain = [df[settings["x"]].min(), df[settings["x"]].max()]
-        if "show_current_month" in settings:
-            if x_domain[0] > settings["show_current_month"]:
-                x_domain[0] = settings["show_current_month"]
-            if x_domain[1] < settings["show_current_month"]:
-                x_domain[1] = settings["show_current_month"]
+        if x_domain[0] % 2 != 0:
+            x_domain[0] -= 1
         if x_domain[1] % 2 != 0:
             x_domain[1] += 1
         return x_domain
 
-    bins = 20
-    x_domain = get_x_domain()
+    if 'maxbins' not in settings:
+        rounded_num = round_to_nearest(len(df), 10)
+        settings['maxbins'] = rounded_num
+        st.write(settings['maxbins'], len(df))
+    if 'x_domain' not in settings:
+        settings['x_domain'] = get_x_domain()
     if "title" not in settings:
         settings["title"] = ""
     plot = (
@@ -392,32 +393,17 @@ def histogram(df: pd.DataFrame, settings: dict):
         .mark_bar()
         .encode(
             x=alt.X(
-                settings["x"],
-                bin=alt.BinParams(maxbins=bins),
-                scale=alt.Scale(domain=x_domain),
+                f"{ settings['x'] }:Q",
+                bin=alt.BinParams(maxbins=settings['maxbins']),
+                scale=alt.Scale(domain=settings['x_domain']),
                 title=settings["x_title"],
             ),
-            y=alt.Y("count()", title=settings["y_title"]),
-            tooltip=[settings["x"], "count()"],
+            y=alt.Y("count()", title=settings["title"])
         )
-    )
-
-    if "show_current_month" in settings:
-        df_line = pd.DataFrame({"x": [settings["show_current_month"]], "y": [0]})
-        current_month_dot = (
-            alt.Chart(df_line)
-            .mark_circle(size=100, color="red")
-            .encode(
-                x=alt.X("x:Q", scale=alt.Scale(domain=x_domain)),
-                y=alt.Y("y:Q"),
-            )
-        )
-
-    if "show_current_month" in settings:
-        plot += current_month_dot
-    plot = plot.properties(
+    ).properties(
         title=settings["title"], width=settings["width"], height=settings["height"]
     )
+
     return st.altair_chart(plot)
 
 

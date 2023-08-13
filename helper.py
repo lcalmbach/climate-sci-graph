@@ -189,4 +189,7 @@ def show_download_button(df: pd.DataFrame, cfg: dict = {}):
     )
 
 
+def round_to_nearest(value, base):
+    return int(value / base / base) * base
+
 LOCAL_HOST = "liestal"

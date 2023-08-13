@@ -11,6 +11,7 @@ from plots import (
     heatmap,
     time_series_line,
     line_chart_3d,
+    histogram
 )
 
 PAGE = __name__
@@ -26,7 +27,7 @@ class NCBNStats:
         self.data_df = st.session_state["station_data"]
         self.stations_dict = self.get_station_dict()
         self.parameters_dict = self.get_parameter_dict()
-        self.min_year, self.max_year = self.get_min_max_year()
+        self.min_year, self.max_year = self.get_min_max_year(self.data_df)
         self.parameter_label = ""
         self.parameter = ""
         self.time_aggregation = "month"
@@ -40,6 +41,7 @@ class NCBNStats:
             "spiral",
         ]
         self.sel_analysis = None
+        self.show_average = False
 
     def get_agg_function(self):
         agg_function = (
@@ -68,9 +70,14 @@ class NCBNStats:
             options = [x for x in options if x not in elements_remove]
         return options
 
-    def get_min_max_year(self):
-        min_year = self.data_df["Year"].min()
-        max_year = self.data_df["Year"].max()
+    def get_min_max_year(self, df: pd.DataFrame):
+        """Returns the first and last year of a given dataframe
+
+        Returns:
+            _type_: _description_
+        """
+        min_year = df["Year"].min()
+        max_year = df["Year"].max()
         return int(min_year), int(max_year)
 
     def filter_data(self, filters):
@@ -82,6 +89,9 @@ class NCBNStats:
                 (df["Year"] >= filters["years"][0])
                 & (df["Year"] <= filters["years"][1])
             ]
+        #todo: add region filter to the widgets and region filter to data
+        if "region" in filters and filters["region"] != []:
+            df = df[df["Climate region"].isin(filters["region"])]
         if filters["months"] != []:
             df = df[df["Month"].isin(filters["months"])]
         return df
@@ -154,13 +164,7 @@ class NCBNStats:
 
         df = self.filter_data(get_filter())
         st.header(lang["barcharts"])
-        st.markdown(f"**{self.parameter_label}**")
-        st.markdown(lang["bar_chart_intro"])
-        st.markdown(
-            lang["parameter_interval"].format(
-                self.parameter_label, int(df["Year"].min()), int(df["Year"].max())
-            )
-        )
+        st.markdown(lang["bar_chart_intro"].format(self.parameter_label, lang["intro_plot"]))
 
         agg_func = self.get_agg_function()
         df = (
@@ -203,9 +207,8 @@ class NCBNStats:
             filter = show_filter(settings, lang, options)
             return filter
 
-        st.header(lang["boxplot"])
-        st.markdown(f"**{self.parameter_label}**")
-        st.markdown(lang["boxplot_intro"])
+        st.header(lang["boxplot"].format(self.parameter_label))
+        st.markdown(lang["intro_box_plot"].format(lang["intro_plot"]))
         df = self.filter_data(get_filter())
         settings = {
             "x": "Month",
@@ -235,9 +238,8 @@ class NCBNStats:
             filter = show_filter(settings, lang, options)
             return filter
 
-        st.header(lang["boxplot"])
-        st.markdown(f"**{self.parameter_label}**")
-        st.markdown(lang["intro"])
+        st.header(lang["superposed_lines"].format(self.parameter_label))
+        st.markdown(lang["intro_superposed_lines"].format(lang["intro_plot"]))
         df = self.filter_data(get_filter())
         if self.time_aggregation == "Year":
             df = (
@@ -297,9 +299,8 @@ class NCBNStats:
             filter = show_filter(settings, lang, options)
             return filter
 
-        st.header(lang["heatmap"])
-        st.markdown(f"**{self.parameter_label}**")
-        st.markdown(lang["intro"])
+        st.header(lang["heatmap"].format(self.parameter_label))
+        st.markdown(lang["intro_heatmap"].format(lang["intro_plot"]))
         df = self.filter_data(get_filter())
         settings = {
             "x": "Month:N",
@@ -331,9 +332,8 @@ class NCBNStats:
             filter = show_filter(settings, lang, options)
             return filter
 
-        st.header(lang["time_series"])
-        st.markdown(f"**{self.parameter_label}**")
-        st.markdown(lang["intro"])
+        st.header(lang["time_series"].format(self.parameter_label))
+        st.markdown(lang["time_series_intro"].format(lang["intro_plot"]))
         agg_func = self.get_agg_function()
         df = self.filter_data(get_filter())
         if self.time_aggregation == "Year":
@@ -366,6 +366,41 @@ class NCBNStats:
         settings = self.get_line_settings(df, self.parameter, settings)
         time_series_line(df, settings)
         show_download_button(df, {"button_text": lang["download_button_text"]})
+    
+    def show_histogram(self):
+        def get_filter():
+            settings = {"stat_par": "", "stations": [], "years": [], "months": []}
+            options = {
+                "stations_dict": self.stations_dict,
+                "min_year": self.min_year,
+                "max_year": self.max_year,
+            }
+            filter = show_filter(settings, lang, options)
+            return filter
+
+        st.header(lang["histogram"].format(self.parameter_label))
+        st.markdown(lang["intro_histogram"].format(lang["intro_plot"]))
+        df = self.filter_data(get_filter())
+        min_val = math.floor(df[self.parameter].min()) - 1
+        max_val = math.ceil(df[self.parameter].max()) + 1
+        settings = {
+            "x": self.parameter,
+            "y": 'count()',
+            "width": 800,
+            "height": 400,
+            "x_title": self.parameter_label,
+            "y_title": lang['count'],
+            "title": "",
+            "maxbins": 10,
+            "x_domain": [min_val, max_val],
+            "tooltip": ["count()"]
+        }
+        stations = df["Station"].unique()
+        for station in stations:
+            df_filtered = df[df["Station"] == station]
+            settings["title"] = f"{df_filtered.iloc[0]['Stationname']} ({station})"
+            histogram(df_filtered, settings)
+            show_download_button(df, {"button_text": lang["download_button_text"]})
 
     def show_spiral(self):
         def get_filter():
@@ -378,9 +413,8 @@ class NCBNStats:
             filter = show_filter(settings, lang, options)
             return filter
 
-        st.header(lang["3d_spiral"])
-        st.markdown(f"**{self.parameter_label}**")
-        st.markdown(lang["intro"])
+        st.header(lang["3d_spiral"].format(self.parameter_label))
+        st.markdown(lang["intro-spiral"].format(lang["intro_plot"]), unsafe_allow_html=True)
         filter = get_filter()
         df = self.filter_data(filter)
         min_val = math.floor(df[self.parameter].min())
@@ -450,3 +484,5 @@ class NCBNStats:
             self.show_time_series()
         elif lang["analysis-options"].index(sel_analysis) == 6:
             self.show_spiral()
+        elif lang["analysis-options"].index(sel_analysis) == 7:
+            self.show_histogram()

@@ -16,10 +16,10 @@ from ressources import Ressources
 from ncbn_stats import NCBNStats
 
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __author__ = "Lukas Calmbach"
 __author_email__ = "lcalmbach@gmail.com"
-VERSION_DATE = "2023-08-12"
+VERSION_DATE = "2023-08-13"
 APP_NAME = "ClimateSciGraph"
 GIT_REPO = "https://github.com/lcalmbach/nbcn-browser"
 PAGE = "app"
