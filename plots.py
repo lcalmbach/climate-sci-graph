@@ -36,8 +36,37 @@ def line_chart(df, settings):
         settings["x_dt"] = "Q"
     if "y_dt" not in settings:
         settings["y_dt"] = "Q"
+    if not ("opacity" in settings):
+        settings["opacity"] = 0.5
 
     if "color" in settings and settings["color"] is not None:
+        if "hide_legend" in settings:
+            color = alt.Color(settings["color"],
+                              legend=None,
+                              scale=alt.Scale(domain=["grey"]))
+        else:
+            color = alt.Color(
+                settings["color"],
+                scale=alt.Scale(scheme="redblue",
+                                reverse=True)
+            )
+        chart = (
+            alt.Chart(df)
+            .mark_line(width=2, clip=True, opacity=settings["opacity"])
+            .encode(
+                x=alt.X(
+                    f"{settings['x']}:{settings['x_dt']}",
+                    scale=alt.Scale(domain=settings["x_domain"]),
+                ),
+                y=alt.Y(
+                    f"{settings['y']}:{settings['y_dt']}",
+                    scale=alt.Scale(domain=settings["y_domain"]),
+                ),
+                color=color,
+                tooltip=settings["tooltip"],
+            )
+        )
+    else:
         chart = (
             alt.Chart(df)
             .mark_line(width=2, clip=True, opacity=0.5)
@@ -50,17 +79,15 @@ def line_chart(df, settings):
                     f"{settings['y']}:{settings['y_dt']}",
                     scale=alt.Scale(domain=settings["y_domain"]),
                 ),
-                color=alt.Color(
-                    settings["color"], scale=alt.Scale(scheme="redblue", reverse=True)
-                ),
                 tooltip=settings["tooltip"],
             )
         )
-    else:
-        st.write(4344)
-        chart = (
-            alt.Chart(df)
-            .mark_line(width=2, clip=True, opacity=0.5)
+
+    if "compare_line" in settings:
+        df2 = df[df['year'] == settings["compare_line"]]
+        chart += (
+            alt.Chart(df2)
+            .mark_line(width=2, clip=True, color='red')
             .encode(
                 x=alt.X(
                     f"{settings['x']}:{settings['x_dt']}",
@@ -117,7 +144,9 @@ def time_series_bar(df, settings):
             x=alt.X(
                 f"{settings['x']}:T",
                 title=settings["x_title"],
-                scale=alt.Scale(domain=settings["x_domain"]),
+                scale=alt.Scale(
+                    domain=settings["x_domain"], axis=alt.Axis(format=("%b %Y"))
+                ),
             ),
             y=alt.Y(f"{settings['y']}:Q", title=settings["y_title"]),
             tooltip=settings["tooltip"],
@@ -277,9 +306,9 @@ def time_series_chart(df, settings):
 
 def heatmap(df, settings):
     title = settings["title"] if "title" in settings else ""
-    if not "show_numbers" in settings:
+    if not ("show_numbers" in settings):
         settings["show_numbers"] = True
-    if not "color_scheme" in settings:
+    if not ("color_scheme" in settings):
         settings["color_scheme"] = "viridis"
 
     plot = (
@@ -290,7 +319,7 @@ def heatmap(df, settings):
             x=alt.X(settings["x"]),
             y=alt.Y(
                 settings["y"],
-                sort=alt.EncodingSortField(field="jahr", order="descending"),
+                sort=alt.EncodingSortField(field="year", order="descending"),
             ),
             color=alt.Color(
                 f"{settings['color']}:Q",
@@ -316,12 +345,21 @@ def bar_chart(df: pd.DataFrame, settings: dict):
         settings["tooltip"] = [settings["x"], settings["y"]]
     if "bar_width" not in settings:
         settings["bar_width"] = 10
-    bar_width = settings["bar_width"]
-    x_axis = alt.X(f"{settings['x']}:N", title=settings["x_title"])
+    if df[settings["x"]].dtype == "datetime64[ns]":
+        x_axis = alt.X(
+            f"{settings['x']}:T",
+            axis=alt.Axis(title=settings["x_title"], format=settings["format_x"]),
+        )
+    else:
+        x_axis = alt.X(f"{settings['x']}:N")
+    if "x_domain" in settings:
+        x_axis.axis.scale = alt.Scale(domain=settings["x_domain"])
     y_axis = alt.Y(settings["y"], title=settings["y_title"])
+    if "y_domain" in settings:
+        y_axis.axis.scale = alt.Scale(domain=settings["y_domain"])
     plot = (
         alt.Chart(df)
-        .mark_bar(size=bar_width)
+        .mark_bar(size=settings["bar_width"])
         .encode(x=x_axis, y=y_axis, tooltip=settings["tooltip"])
     )
     if "h_line" in settings:
@@ -329,7 +367,7 @@ def bar_chart(df: pd.DataFrame, settings: dict):
             alt.Chart(df)
             .mark_line(color="red")
             .encode(
-                x=f"{settings['x']}:N",
+                x=x_axis,
                 y=settings["h_line"],
             )
         )
@@ -344,16 +382,9 @@ def bar_chart(df: pd.DataFrame, settings: dict):
 def box_plot(df: pd.DataFrame, settings: dict):
     if "title" not in settings:
         settings["title"] = ""
-    if "tooltip" not in settings:
-        settings["tooltip"] = [settings["x"], settings["y"]]
-
     x_axis = alt.X(f"{settings['x']}:N", title=settings["x_title"])
     y_axis = alt.Y(settings["y"], title=settings["y_title"])
-    plot = (
-        alt.Chart(df)
-        .mark_boxplot()
-        .encode(x=x_axis, y=y_axis, tooltip=settings["tooltip"])
-    )
+    plot = alt.Chart(df).mark_boxplot().encode(x=x_axis, y=y_axis)
     if "h_line" in settings:
         plot += (
             alt.Chart(df)
@@ -380,25 +411,25 @@ def histogram(df: pd.DataFrame, settings: dict):
             x_domain[1] += 1
         return x_domain
 
-    if 'maxbins' not in settings:
+    if "maxbins" not in settings:
         rounded_num = round_to_nearest(len(df), 10)
-        settings['maxbins'] = rounded_num
-        st.write(settings['maxbins'], len(df))
-    if 'x_domain' not in settings:
-        settings['x_domain'] = get_x_domain()
+        settings["maxbins"] = rounded_num
+    if "x_domain" not in settings:
+        settings["x_domain"] = get_x_domain()
     if "title" not in settings:
         settings["title"] = ""
+
     plot = (
         alt.Chart(df)
         .mark_bar()
         .encode(
             x=alt.X(
                 f"{ settings['x'] }:Q",
-                bin=alt.BinParams(maxbins=settings['maxbins']),
-                scale=alt.Scale(domain=settings['x_domain']),
+                bin=alt.BinParams(maxbins=settings["maxbins"]),
+                scale=alt.Scale(domain=settings["x_domain"]),
                 title=settings["x_title"],
             ),
-            y=alt.Y("count()", title=settings["title"])
+            y=alt.Y("count()", axis=alt.Axis(title=settings["y_title"])),
         )
     ).properties(
         title=settings["title"], width=settings["width"], height=settings["height"]

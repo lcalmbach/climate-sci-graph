@@ -14,12 +14,12 @@ MIN_POINTS = 8
 
 
 class TrendAnalysis:
-    def __init__(self):
+    def __init__(self, data):
         global lang
         init_lang_dict_complete(os.path.basename(__file__), __name__)
         lang = get_lang(PAGE)
 
-        self.data_df = st.session_state["station_data"]
+        self.data_df = data
         self.stations_dict = self.get_station_dict()
         # self.stat_function_dict = self.get_stat_function_dict()
         self.parameters_dict = self.get_parameter_dict()
@@ -30,7 +30,7 @@ class TrendAnalysis:
     def get_lin_reg(self, df: pd.DataFrame):
         df = df.dropna(how="all")
         if len(df) > 2:
-            df["X_numeric"] = (df["Date"] - df["Date"].min()).dt.days
+            df["X_numeric"] = (df["date"] - df["date"].min()).dt.days
             x = np.array(list(df["X_numeric"]))
             y = np.array(list(df[self.parameter]))
             slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
@@ -46,11 +46,11 @@ class TrendAnalysis:
     def filter_data(self, filters):
         df = self.data_df
         if "stations" in filters and filters["stations"] != []:
-            df = df[df["Station"].isin(filters["stations"])]
+            df = df[df["station"].isin(filters["stations"])]
         if filters["years"] != []:
             df = df[
-                (df["Year"] >= filters["years"][0])
-                & (df["Year"] <= filters["years"][1])
+                (df["year"] >= filters["years"][0])
+                & (df["year"] <= filters["years"][1])
             ]
         if filters["months"] != []:
             df = df[df["Month"].isin(filters["months"])]

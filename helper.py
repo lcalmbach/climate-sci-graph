@@ -8,6 +8,9 @@ import string
 import random
 import pandas as pd
 
+LOCAL_HOST = "liestal"
+DEV_MACHINES = [LOCAL_HOST]
+
 
 def init_lang_dict_complete(module: str, key: str):
     """
@@ -16,7 +19,6 @@ def init_lang_dict_complete(module: str, key: str):
     Returns:
     - lang (dict): A Python dictionary containing all the language strings.
     """
-
     lang_file = f"./lang/{module.replace('.py','.json')}"
     try:
         with open(lang_file, "r") as file:
@@ -155,6 +157,11 @@ def show_filter(settings: dict, lang: dict, options: dict):
                     options=list(options["stations_dict"].keys()),
                     format_func=lambda x: options["stations_dict"][x],
                 )
+            if "year" in settings:
+                years = sorted(
+                    range(options["min_year"], options["max_year"] + 1), reverse=True
+                )
+                settings["year"] = st.selectbox(lang["year"], options=years)
             if "years" in settings:
                 settings["years"] = st.slider(
                     lang["years"],
@@ -162,10 +169,23 @@ def show_filter(settings: dict, lang: dict, options: dict):
                     max_value=options["max_year"],
                     value=[options["min_year"], options["max_year"]],
                 )
+            if "month" in settings:
+                settings["month"] = st.selectbox(lang["month"], options=range(1, 13))
             if "months" in settings:
                 settings["months"] = st.multiselect(
                     lang["months"], options=range(1, 13)
                 )
+            if "value" in settings:
+                settings["value"]["use_numeric_filter"] = st.checkbox(
+                    lang["use_numeric_filter"]
+                )
+                if settings["value"]["use_numeric_filter"]:
+                    options_compare = [">=", ">", "<=", "<" "="]
+                    settings["value"]["compare_op"] = st.selectbox(
+                        label=settings["value"]["parameter"], options=options_compare
+                    )
+                    settings["value"]["value"] = st.number_input(lang["numeric_filter"])
+
     return settings
 
 
@@ -192,4 +212,38 @@ def show_download_button(df: pd.DataFrame, cfg: dict = {}):
 def round_to_nearest(value, base):
     return int(value / base / base) * base
 
-LOCAL_HOST = "liestal"
+
+def get_config_value(key: str) -> str:
+    if socket.gethostname().lower() in DEV_MACHINES:
+        return os.environ.get(key)
+    else:
+        return st.secrets[key]
+
+
+def remove_special_chars(s: str):
+    s_modified = s.replace("[", "(").replace("]", ")")
+    return s_modified
+
+
+def remove_unit(s: str):
+    s_modified = s[: s.find("[")].strip()
+    return s_modified
+
+
+def add_date_column(df: pd.DataFrame, agg_type: str):
+
+    if agg_type == "day":
+        ...
+    elif agg_type == "week":
+        df['date'] = df['date'] + pd.to_timedelta((2 - df['date'].dt.weekday + 7) % 7, unit='d')
+    else:
+        if agg_type == "year":
+            df["month"] = 7
+        if agg_type == "decade":
+            df['year'] = df['decade'] + 5
+            df["month"] = 7
+        df["date"] = pd.to_datetime(
+            df["year"].astype(str) + "-" + df["month"].astype(str) + "-15"
+        )
+        
+    return df

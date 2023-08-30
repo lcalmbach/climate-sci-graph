@@ -4,22 +4,15 @@ from streamlit_lottie import st_lottie
 import requests
 from helper import get_used_languages, init_lang_dict_complete, get_lang
 from streamlit_option_menu import option_menu
-import re
-import io
 from enum import Enum
-from trend import TrendAnalysis
 import datetime
 
-from about import About
-from stations import Stations
-from ressources import Ressources
-from ncbn_stats import NCBNStats
+import nbcn
 
-
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 __author__ = "Lukas Calmbach"
 __author_email__ = "lcalmbach@gmail.com"
-VERSION_DATE = "2023-08-13"
+VERSION_DATE = "2023-08-30"
 APP_NAME = "ClimateSciGraph"
 GIT_REPO = "https://github.com/lcalmbach/nbcn-browser"
 PAGE = "app"
@@ -28,15 +21,14 @@ lang = {}
 LOTTIE_URL = "https://assets9.lottiefiles.com/temp/lf20_rpC1Rd.json"
 LOTTIE_URL = "https://lottie.host/016f9a14-ca58-4ade-85fa-ccce6bbc9318/ApQE6zjqWN.json"
 
-STATIONS_URL = "./data/1_download_url_nbcn_homogen.csv"
-
 
 class Menu(Enum):
     ABOUT = 0
     STATIONS = 1
-    MONTHLY = 2
-    TREND = 3
-    RESSOURCES = 4
+    BROWSE = 2
+    MONTHLY = 3
+    TREND = 4
+    RESSOURCES = 5
 
 
 def init():
@@ -59,15 +51,14 @@ def init():
         st.session_state["last_data_refresh"] = datetime.datetime.now().strftime("%x")
 
 
-def get_menu_option():
-    menu_options = lang["menu-options"]
+def get_menu_selection(menu_options):
     # https://icons.getbootstrap.com/
     with st.sidebar:
         st.markdown(f"## {APP_NAME}")
         return option_menu(
             None,
             menu_options,
-            icons=["house", "geo", "calendar-month", "graph-up", "archive"],
+            icons=["house", "geo", "database", "calendar-month", "graph-up", "archive"],
             menu_icon="cast",
             default_index=0,
         )
@@ -144,79 +135,15 @@ def get_lottie():
 
 
 def show_lottie():
+    """
+    Displays lottie animation if it is available.
+    """
     lottie_search_names, ok = get_lottie()
     if ok:
         with st.sidebar:
             st_lottie(lottie_search_names, height=140, loop=20)
     else:
         pass
-
-
-@st.cache_data(show_spinner=False)
-def get_data():
-    def find_first_row(url):
-        first_line = 0
-        col_widths = []
-        try:
-            search_text = "Year"
-            response = requests.get(url)
-            if response.status_code == 200:
-                file_content = io.StringIO(response.text)
-                line_number = 1
-                for line in file_content:
-                    if search_text in line:
-                        first_line = line_number
-                        words = re.findall(r"\b\w+\b", line)
-                        # start_positions = [m.start() for m in re.finditer(r'\b\w+\b', line)]
-                        if len(words) == 3:
-                            col_widths = [6, 13, 17]
-                        else:
-                            col_widths = [6, 13, 17, 13]
-                    else:
-                        line_number += 1
-
-        except Exception as e:
-            print(f"An error occurred: {e}")
-        return first_line - 1, col_widths
-
-    col_widths = []
-    skiprows = 0
-    # open file with all stations and associated urls
-    url_df = pd.read_csv(STATIONS_URL, sep=";")
-    stations = list(url_df["Abbreviation"])
-    url_df.set_index("Abbreviation", inplace=True)
-    # init dataframe
-    station_data = pd.DataFrame(
-        {
-            "Station": [],
-            "Year": [],
-            "Month": [],
-            "Date": [],
-            "Temperature": [],
-            "Precipitation": [],
-        }
-    )
-    for station in stations:
-        url = url_df.loc[station]["URL"]
-        skiprows, col_widths = find_first_row(url)
-        df = pd.read_fwf(url, col_widths=col_widths, skiprows=skiprows)
-        df["Station"] = station
-        # some stations have no precipitation data, so add this column
-        if "Precipitation" not in df:
-            df = df.assign(Precipitation=None)
-        df["Day"] = 15
-        df["Date"] = pd.to_datetime(df[["Year", "Month", "Day"]])
-        df[["Temperature", "Precipitation"]] = df[
-            ["Temperature", "Precipitation"]
-        ].astype(float)
-        df[["Year", "Month"]] = df[["Year", "Month"]].astype(int)
-        station_data = pd.concat([station_data, df])
-
-    stations = url_df.reset_index()[["Abbreviation", "Station"]]
-    stations.columns = ["Station", "Stationname"]
-    station_data = station_data.merge(stations, on="Station", how="left")
-    # station_data.drop('Abbreviation', axis=1, inplace=True)
-    return station_data, url_df
 
 
 def main() -> None:
@@ -235,21 +162,11 @@ def main() -> None:
 
     lang = get_lang(PAGE)
     with st.spinner(lang["loading-data"]):
-        st.session_state["station_data"], st.session_state["station_url"] = get_data()
+        # if not ("ncbn" in st.session_state):
+        st.session_state.ncbn = nbcn.NCBN(APP_NAME)
     show_lottie()
-
-    sel_menu_option = get_menu_option()
-    if lang["menu-options"].index(sel_menu_option) == Menu.ABOUT.value:
-        app = About(APP_NAME)
-    elif lang["menu-options"].index(sel_menu_option) == Menu.STATIONS.value:
-        app = Stations()
-    elif lang["menu-options"].index(sel_menu_option) == Menu.MONTHLY.value:
-        app = NCBNStats()
-    elif lang["menu-options"].index(sel_menu_option) == Menu.TREND.value:
-        app = TrendAnalysis()
-    elif lang["menu-options"].index(sel_menu_option) == Menu.RESSOURCES.value:
-        app = Ressources()
-    app.run()
+    ncbn = st.session_state.ncbn
+    ncbn.menu_selection = get_menu_selection(ncbn.menu_options)
     display_language_selection()
     st.sidebar.markdown(get_app_info(), unsafe_allow_html=True)
 

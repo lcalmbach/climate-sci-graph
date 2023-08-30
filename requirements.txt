@@ -7,3 +7,7 @@ streamlit_folium==0.13.0
 plotly==5.15.0
 pymannkendall==1.4.3
 scipy
+# requirements.txt
+s3fs
+# Direct pypi install coming soon
+git+https://github.com/streamlit/files-connection

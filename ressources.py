@@ -6,7 +6,6 @@ from helper import init_lang_dict_complete, get_lang
 
 PAGE = __name__
 lang = {}
-RESSOURCES_FILE = "./data/ressources.csv"
 
 
 class Ressources:
