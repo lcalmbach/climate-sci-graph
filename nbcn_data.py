@@ -39,7 +39,7 @@ def get_stations_metadata():
     return df
 
 
-@st.cache_data(show_spinner=False, ttl=3600 * 24)
+# @st.cache_data(show_spinner=False, ttl=3600 * 24)
 def get_stations_df():
     df = pd.read_csv(DATA_DICT["stations_file"], sep=";", encoding="ansi")
     df.columns = [x.lower() for x in df.columns]
