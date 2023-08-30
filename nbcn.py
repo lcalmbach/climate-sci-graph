@@ -1091,7 +1091,7 @@ class NCBN:
                         st.dataframe(summary_df, hide_index=True, use_container_width=True)
                     cnt_stations += 1
                     num_stations.markdown(
-                        lang["stations-shown"].format(cnt_stations, self.stations_dict)
+                        lang["stations-shown"].format(cnt_stations, len(self.stations_dict))
                     )
 
     def show_browse_data(self, config):

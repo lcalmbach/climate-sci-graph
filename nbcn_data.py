@@ -29,7 +29,7 @@ def get_stations_metadata():
         link_temlate = "https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/messwerte-und-messnetze.html#param=messnetz-klima&station={}&lang=de&chart=month"
         url = link_temlate.format(row["abbreviation"])
         return url
-    df = pd.read_csv(STATIONS_METADATA_URL, sep=";", encoding="cp1252")
+    df = pd.read_csv(STATIONS_METADATA_URL, sep=";", encoding="utf-8")
     df.columns = [x.lower() for x in df.columns]
     df = df[df["abbreviation"].notna()]
     df["station-info"] = df.apply(create_link, axis=1)
@@ -42,6 +42,7 @@ def get_stations_metadata():
 @st.cache_data(show_spinner=False, ttl=3600 * 24)
 def get_stations_df():
     df = pd.read_csv(DATA_DICT["stations_file"], sep=";", encoding="cp1252")
+    # st.write(123, df)
     df.columns = [x.lower() for x in df.columns]
     return df
 
