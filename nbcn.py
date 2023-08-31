@@ -143,7 +143,7 @@ class NCBN:
         }
         self.parameters_agg_dict = {
             "gre000d0": "mean",
-            "hto000d0": "sum",
+            "hto000d0": "mean",
             "nto000d0": "mean",
             "prestad0": "mean",
             "rre150d0": "sum",
