@@ -9,7 +9,7 @@ import datetime
 
 import nbcn
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 __author__ = "Lukas Calmbach"
 __author_email__ = "lcalmbach@gmail.com"
 VERSION_DATE = "2023-08-31"
