@@ -99,28 +99,23 @@ def get_data():
 
     :return: Combined DataFrame of previous and current data
     """
-    with st.status("Downloading data..."):
-        # make sure the data exists and is recent
-        if not os.path.exists(DATA_DICT["current"]["target_file"]):
-            st.write("Loading previous data from origin")
-            load_data(load_all_data=True)
-        else:
-            st.write("Loading previous data from local file")
-            today = datetime.date.today()
-            # Get February 1st of the current year
-            feb_first = datetime.date(today.year, 2, 1)
-            previous_df = pd.read_parquet(DATA_DICT["previous"]["target_file"])
-            last_year = previous_df["year"].max()
-            if today > feb_first and last_year < (today.year - 1):
-                load_data(load_all_data=True)
-
+    # make sure the data exists and is recent
+    if not os.path.exists(DATA_DICT["current"]["target_file"]):
+        load_data(load_all_data=True)
+    else:
+        today = datetime.date.today()
+        # Get February 1st of the current year
+        feb_first = datetime.date(today.year, 2, 1)
         previous_df = pd.read_parquet(DATA_DICT["previous"]["target_file"])
-        st.write("Loading current data from origin")
-        load_data(load_all_data=False)
-        current_df = pd.read_parquet(DATA_DICT["current"]["target_file"])
-        st.write(previous_df, current_df)
-        df = pd.concat([previous_df, current_df], ignore_index=True)
-        return df
+        last_year = previous_df["year"].max()
+        if today > feb_first and last_year < (today.year - 1):
+            load_data(load_all_data=True)
+
+    previous_df = pd.read_parquet(DATA_DICT["previous"]["target_file"])
+    load_data(load_all_data=False)
+    current_df = pd.read_parquet(DATA_DICT["current"]["target_file"])
+    df = pd.concat([previous_df, current_df], ignore_index=True)
+    return df
 
 
 if __name__ == "__main__":
