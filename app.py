@@ -9,7 +9,7 @@ import datetime
 
 import nbcn
 
-__version__ = "0.0.9"
+__version__ = "0.0.10"
 __author__ = "Lukas Calmbach"
 __author_email__ = "lcalmbach@gmail.com"
 VERSION_DATE = "2023-09-12"
@@ -79,7 +79,7 @@ def get_app_info():
     info = f"""<div style="background-color:powderblue; padding: 10px;border-radius: 15px;">
     <small>{created_by} <a href="mailto:{__author_email__}">{__author__}</a><br>
     {version}: {__version__} ({VERSION_DATE})<br>
-    {data_source}: <a href="https://www.meteoswiss.admin.ch/services-and-publications/applications/ext/climate-tables-homogenized.html">MeteoSwiss</a><br>
+    {data_source}: <a href="https://opendata.swiss/de/dataset/klimamessnetz-tageswerte">MeteoSwiss</a><br>
     {powered_by} <a href="https://streamlit.io/">Streamlit</a>, <a href="https://github.com/mmhs013/pymannkendall">pymannkendall</a><br>
     {translation} <a href="https://lcalmbach-gpt-translate-app-i49g8c.streamlit.app/">PolyglotGPT</a><br>
     <a href="{GIT_REPO}">git-repo</a><br>
