@@ -1,4 +1,4 @@
 env
 work
+./data/*.parquet
 __pycache__
-data/*.parquet
