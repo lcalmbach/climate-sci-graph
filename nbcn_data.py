@@ -6,7 +6,7 @@ import datetime
 import numpy as np
 
 # from st_files_connection import FilesConnection
-from helper import get_config_value
+from helper import reduce_memory_usage
 
 STATIONS_METADATA_URL = "./data/1_download_url_nbcn_homogen.csv"
 
@@ -29,6 +29,7 @@ def get_stations_metadata():
         link_temlate = "https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/messwerte-und-messnetze.html#param=messnetz-klima&station={}&lang=de&chart=month"
         url = link_temlate.format(row["abbreviation"])
         return url
+
     df = pd.read_csv(STATIONS_METADATA_URL, sep=";", encoding="utf-8")
     df.columns = [x.lower() for x in df.columns]
     df = df[df["abbreviation"].notna()]
@@ -78,10 +79,11 @@ def load_data(load_all_data: bool):
             else:
                 df_all = pd.concat([df_all, df], ignore_index=True)
         df_all.columns = [x.lower() for x in df_all.columns]
-        df_all.to_parquet(DATA_DICT[mode]["target_file"], index=False)
+        df_all.to_parquet(DATA_DICT[mode]["target_file"], index=False, engine="pyarrow")
 
     url_df = get_stations_df()
     url_df.dropna(subset=["station"], inplace=True)
+
     if load_all_data:
         write_to_parquet("previous")
     write_to_parquet("current")
@@ -107,17 +109,20 @@ def get_data():
         # Get February 1st of the current year
         feb_first = datetime.date(today.year, 2, 1)
         previous_df = pd.read_parquet(DATA_DICT["previous"]["target_file"])
+        previous_df = reduce_memory_usage(previous_df, True)
         last_year = previous_df["year"].max()
         if today > feb_first and last_year < (today.year - 1):
             load_data(load_all_data=True)
 
     previous_df = pd.read_parquet(DATA_DICT["previous"]["target_file"])
+
     load_data(load_all_data=False)
     current_df = pd.read_parquet(DATA_DICT["current"]["target_file"])
     df = pd.concat([previous_df, current_df], ignore_index=True)
+    df = reduce_memory_usage(df, False)
     return df
 
 
 if __name__ == "__main__":
+    """Used when module id called outside streamlit"""
     load_data(load_all_data=True)
-    # get_data()

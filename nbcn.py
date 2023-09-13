@@ -283,8 +283,8 @@ class NCBN:
             dict: cleaned analysis dict
         """
 
-        if self.menu_selection == 'trend':
-            options = lang['trend-analysis-options']
+        if self.menu_selection == "trend":
+            options = lang["trend-analysis-options"]
         else:
             all_options = lang["stats-analysis-options"]
             options = []
@@ -513,7 +513,11 @@ class NCBN:
 
         st.header(lang["stacked-lines"].format(self.parameters_label))
         if self.compare_year > 0:
-            st.markdown("Comparison of the years {} to {} with {}".format(self.min_year,self.max_year,self.compare_year))
+            st.markdown(
+                "Comparison of the years {} to {} with {}".format(
+                    self.min_year, self.max_year, self.compare_year
+                )
+            )
         st.markdown(lang["intro-stacked-lines"].format(lang["intro_plot"]))
 
         year_field = (
@@ -587,10 +591,10 @@ class NCBN:
             "color": self.par_label_no_unit,
             "width": 800,
             "height": 400,
-            "y_title": lang['year'],
+            "y_title": lang["year"],
             "x_title": lang["month"],
             "tooltip": [self.time_aggregation, "year", self.par_label_no_unit],
-            "show_numbers": (self.time_aggregation == 'month')
+            "show_numbers": (self.time_aggregation == "month"),
         }
         stations = df["station"].unique()
         for station in stations:
@@ -616,19 +620,23 @@ class NCBN:
         st.markdown(lang["time_series_intro"].format(lang["intro_plot"]))
         agg_func = self.parameters_agg_dict[self.parameters[0]]
         df = self.filter_base_data(get_filter())
-        if (self.time_aggregation in ('week', 'day')) & ((self.max_year - self.min_year) > 1):
-            df = df[df['year'] == datetime.now().year]
+        if (self.time_aggregation in ("week", "day")) & (
+            (self.max_year - self.min_year) > 1
+        ):
+            df = df[df["year"] == datetime.now().year]
             st.info(lang["interval_too_long"])
         if len(df["station"].unique()) > 10:
             st.info(lang["too_many_stations"])
         else:
             df = add_date_column(df, self.time_aggregation)
-            aggregation_fields = ["year", "station", self.time_aggregation, "date"] if self.time_aggregation != 'year' else ["station", self.time_aggregation, "date"]
-            if self.time_aggregation != 'daily':
+            aggregation_fields = (
+                ["year", "station", self.time_aggregation, "date"]
+                if self.time_aggregation != "year"
+                else ["station", self.time_aggregation, "date"]
+            )
+            if self.time_aggregation != "daily":
                 df = (
-                    df.groupby(aggregation_fields)[
-                        self.parameters
-                    ]
+                    df.groupby(aggregation_fields)[self.parameters]
                     .agg([agg_func])
                     .reset_index()
                 )
@@ -663,7 +671,9 @@ class NCBN:
             filter = show_filter(settings, lang, options)
             return filter
 
-        st.header(lang["histogram"].format(self.parameters_short_dict[self.parameters[0]]))
+        st.header(
+            lang["histogram"].format(self.parameters_short_dict[self.parameters[0]])
+        )
         st.markdown(lang["intro_histogram"].format(lang["intro_plot"]))
         df = self.filter_base_data(get_filter())
         agg_func = self.parameters_agg_dict[self.parameters[0]]
@@ -719,7 +729,9 @@ class NCBN:
             .agg([agg_func])
             .reset_index()
         )
-        df.columns = ["year", "station", self.time_aggregation] + [self.par_label_no_unit]
+        df.columns = ["year", "station", self.time_aggregation] + [
+            self.par_label_no_unit
+        ]
         min_val = math.floor(df[self.par_label_no_unit].min())
         max_val = math.ceil(df[self.par_label_no_unit].max())
         df_filtered = df[df["station"] == filter["station"]]
@@ -778,11 +790,11 @@ class NCBN:
                 if self.parameters == []:
                     self.parameters = list(self.parameters_dict.keys())
 
-            if self.menu_selection == 'trend':
-                display_options = lang['trend-display-options']
+            if self.menu_selection == "trend":
+                display_options = lang["trend-display-options"]
                 self.display = st.selectbox(lang["display"], options=display_options)
-                self.show_regression = st.checkbox(lang['show-regression-line'])
-            
+                self.show_regression = st.checkbox(lang["show-regression-line"])
+
             if "analysis-options" in config:
                 analysis_options = analysis_options
                 sel_analysis = st.selectbox(
@@ -798,8 +810,9 @@ class NCBN:
                     ]
                 if analysis_options.index(sel_analysis) == 3:
                     year_options = range(self.min_year, self.max_year + 1)[::-1]
-                    self.compare_year = st.selectbox(label=lang["compare-year"],
-                                                     options=year_options)
+                    self.compare_year = st.selectbox(
+                        label=lang["compare-year"], options=year_options
+                    )
                     self.parameters_label = self.parameters_short_dict[
                         self.parameters[0]
                     ]
@@ -898,9 +911,11 @@ class NCBN:
             if map_json["last_object_clicked_popup"] is not None:
                 station = map_json["last_object_clicked_popup"]
                 row = self.station_df[self.station_df["station"] == station]
-                more_info = """<a href="{}">{}</a>""".format(row.iloc[0]['station-info'], lang['more-info'])
-                data_download_link = (
-                    """<a href="{}">{}</a>""".format(row.iloc[0]['url'], lang["download-station-data"])
+                more_info = """<a href="{}">{}</a>""".format(
+                    row.iloc[0]["station-info"], lang["more-info"]
+                )
+                data_download_link = """<a href="{}">{}</a>""".format(
+                    row.iloc[0]["url"], lang["download-station-data"]
                 )
                 df = self.station_df.drop(columns=["url", "station-info", "tooltip"])
                 row = df[df["station"] == station]
@@ -995,7 +1010,7 @@ class NCBN:
             return slope, intercept, r_value, p_value, std_err
         else:
             return None, None, None, None, None
-        
+
     def mann_kendall(self):
         """
         https://github.com/mmhs013/pymannkendall
@@ -1030,7 +1045,8 @@ class NCBN:
         def show_result(result):
             ok = self.display == lang["trend-display-options"][0]
             ok = ok or (
-                self.display == lang["trend-display-options"][1] and result.trend == self.display
+                self.display == lang["trend-display-options"][1]
+                and result.trend == self.display
             )
             return ok
 
@@ -1053,7 +1069,7 @@ class NCBN:
             "tooltip": ["station", "date", self.par_label_no_unit],
             "width": 800,
             "height": 300,
-            "show_regression": self.show_regression
+            "show_regression": self.show_regression,
         }
         num_stations = st.empty()
         # settings["x_domain"] = [
@@ -1069,7 +1085,7 @@ class NCBN:
         for station in self.stations_dict.keys():
             cols = st.columns([3, 1])
             filtered_df = df[df["station"] == station].sort_values(by="date")
-            
+
             if len(filtered_df) > MIN_POINTS:
                 # settings['x_domain'] = [ f"{df['month_date'].min().year}-01-01", f"{df['month_date'].max().year}-12-31"]
                 cnt_all_stations += 1
@@ -1081,17 +1097,25 @@ class NCBN:
                     ] = f"{self.stations_dict[station]} ({station}): {result.trend}"
                     with cols[0]:
                         if settings["show_regression"]:
-                            slope, intercept, r_value, p_value, std_err = self.get_lin_reg(
-                                filtered_df
-                            )
+                            (
+                                slope,
+                                intercept,
+                                r_value,
+                                p_value,
+                                std_err,
+                            ) = self.get_lin_reg(filtered_df)
 
                         time_series_chart(filtered_df, settings)
                     with cols[1]:
                         summary_df = get_summary_df(df, result)
-                        st.dataframe(summary_df, hide_index=True, use_container_width=True)
+                        st.dataframe(
+                            summary_df, hide_index=True, use_container_width=True
+                        )
                     cnt_stations += 1
                     num_stations.markdown(
-                        lang["stations-shown"].format(cnt_stations, len(self.stations_dict))
+                        lang["stations-shown"].format(
+                            cnt_stations, len(self.stations_dict)
+                        )
                     )
 
     def show_browse_data(self, config):
@@ -1121,8 +1145,10 @@ class NCBN:
         # create monthly data
         config = ["analysis-options", "parameter"]
         sel_analysis = self.get_parameters(config)
-        st.header(lang["trend-title"].format(self.parameters_short_dict[self.parameters[0]]))
-        if lang['trend-analysis-options'].index(sel_analysis) == 0:
-            st.markdown(lang['trend-intro'])
+        st.header(
+            lang["trend-title"].format(self.parameters_short_dict[self.parameters[0]])
+        )
+        if lang["trend-analysis-options"].index(sel_analysis) == 0:
+            st.markdown(lang["trend-intro"])
         else:
             self.mann_kendall()

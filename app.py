@@ -9,10 +9,10 @@ import datetime
 
 import nbcn
 
-__version__ = "0.0.10"
+__version__ = "0.0.11"
 __author__ = "Lukas Calmbach"
 __author_email__ = "lcalmbach@gmail.com"
-VERSION_DATE = "2023-09-12"
+VERSION_DATE = "2023-09-13"
 APP_NAME = "ClimateSciGraph"
 GIT_REPO = "https://github.com/lcalmbach/nbcn-browser"
 PAGE = "app"

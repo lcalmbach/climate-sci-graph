@@ -41,14 +41,12 @@ def line_chart(df, settings):
 
     if "color" in settings and settings["color"] is not None:
         if "hide_legend" in settings:
-            color = alt.Color(settings["color"],
-                              legend=None,
-                              scale=alt.Scale(domain=["grey"]))
+            color = alt.Color(
+                settings["color"], legend=None, scale=alt.Scale(domain=["grey"])
+            )
         else:
             color = alt.Color(
-                settings["color"],
-                scale=alt.Scale(scheme="redblue",
-                                reverse=True)
+                settings["color"], scale=alt.Scale(scheme="redblue", reverse=True)
             )
         chart = (
             alt.Chart(df)
@@ -84,10 +82,10 @@ def line_chart(df, settings):
         )
 
     if "compare_line" in settings:
-        df2 = df[df['year'] == settings["compare_line"]]
+        df2 = df[df["year"] == settings["compare_line"]]
         chart += (
             alt.Chart(df2)
-            .mark_line(width=2, clip=True, color='red')
+            .mark_line(width=2, clip=True, color="red")
             .encode(
                 x=alt.X(
                     f"{settings['x']}:{settings['x_dt']}",
