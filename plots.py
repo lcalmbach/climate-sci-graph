@@ -439,7 +439,6 @@ def histogram(df: pd.DataFrame, settings: dict):
 def line_chart_3d(df, settings):
     def value_to_xy(value, month):
         v = value - settings["y_domain"][0]
-        # st.write(value, min ,v, month)
         origin = (np.abs(settings["y_domain"][0]) + settings["y_domain"][1]) / 2
         theta_radians = 2 * np.pi / 12 * (month - 1)
         x = origin + v * np.cos(theta_radians)
@@ -447,7 +446,6 @@ def line_chart_3d(df, settings):
         return x, y
 
     rad_max: float = np.abs(settings["y_domain"][0]) + settings["y_domain"][1] + 1
-    xl, yl, zl, clr = [], [], [], []
     df["x"] = 0
     df["y"] = 0
     df["z"] = 0
@@ -468,7 +466,7 @@ def line_chart_3d(df, settings):
         + " °C"
     )
 
-    ##color schemas: https://plotly.com/python/colorscales/#colorscales-in-dash
+    # color schemas: https://plotly.com/python/colorscales/#colorscales-in-dash
     fig = px.scatter_3d(
         df,
         x="x",

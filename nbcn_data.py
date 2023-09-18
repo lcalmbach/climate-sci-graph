@@ -43,7 +43,6 @@ def get_stations_metadata():
 @st.cache_data(show_spinner=False, ttl=3600 * 24)
 def get_stations_df():
     df = pd.read_csv(DATA_DICT["stations_file"], sep=";", encoding="cp1252")
-    # st.write(123, df)
     df.columns = [x.lower() for x in df.columns]
     return df
 
@@ -124,5 +123,8 @@ def get_data():
 
 
 if __name__ == "__main__":
-    """Used when module id called outside streamlit"""
+    """
+    Used when module id called outside streamlit. py nbcn_data.py called from the rpl
+    automatically loads the data and stores a parquet file in the data folder.
+    """
     load_data(load_all_data=True)

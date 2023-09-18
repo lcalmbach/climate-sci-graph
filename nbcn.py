@@ -525,10 +525,15 @@ class NCBN:
         )
         df = self.get_base_data(get_filter(), add_fields=year_field)
         df = self.get_aggregated_data(df)
-
         df.rename(columns={self.parameters[0]: self.par_label_no_unit}, inplace=True)
-        df = df[["station", "year", self.time_aggregation, self.par_label_no_unit]]
+        
+        if self.time_aggregation == 'year':
+            field_list = ["station", self.time_aggregation, self.par_label_no_unit]
+        else:
+            field_list = ["station", "year", self.time_aggregation, self.par_label_no_unit]
+        df = df[field_list]
         df = self.merge_station_columns(df, ["station name"])
+        
         x_domain = [
             df[self.time_aggregation].min(),
             df[self.time_aggregation].max(),
@@ -548,8 +553,9 @@ class NCBN:
             "opacity": 0.1,
             "hide_legend": True,
             "compare_line": self.compare_year,
-            "tooltip": [self.time_aggregation, "year", self.par_label_no_unit],
+            "tooltip": field_list,
         }
+
         stations = df["station"].unique()
         for station in stations:
             df_filtered = df[
